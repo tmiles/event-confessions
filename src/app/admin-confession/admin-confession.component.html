@@ -1,0 +1,50 @@
+<!-- <mat-card *ngIf="confession">
+  <mat-card-header>
+    <mat-card-title>
+      <h4>
+        <strong>{{confession.to}}</strong>
+      </h4>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <span *ngIf="confession.from">from
+        <strong>{{confession.from}}</strong>
+      </span>
+
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <h3 style="font-size: 12px"> {{confession.message}} </h3>
+    <div style="color: #999; font-size: 9px; margin-top: 10px">{{confession.dateCreated | date:'short'}}</div>
+  </mat-card-content>
+  <mat-card-actions style="margin: 0px 20px">
+    <div style="padding-top: 20px">
+      <mat-icon [matBadge]="confession.score" matBadgeColor="warn" style="margin-right: 20px">favorite</mat-icon>
+      <mat-slide-toggle (change)="seeChange($event, confession.id)" [checked]="confession.visible">Approve</mat-slide-toggle>
+      <span style="margin-left: 20px">
+        <mat-icon *ngIf="confession.comments" (click)="showComments = !showComments">message</mat-icon>
+        <span *ngIf="confession.comments">
+          <span style="position: relative; right: 40px; bottom: 20px">{{confession.commentPending}}</span>
+          <span style="position: relative; bottom: 20px">{{confession.commentCount}}</span>
+        </span>
+      </span>
+
+    </div>
+    <div *ngIf="showComments" style="margin-top: 20px">
+      <div *ngIf="!confession.comments || confession.comments.length === 0">
+        No comments available
+      </div>
+      <div *ngFor="let com of confession.comments" class="mat-elevation-z2" style="padding: 20px 20px; border-radius: 5px; margin-bottom: 4px">
+        <div>
+          <mat-slide-toggle (change)="moderateComment($event, com.id)" [checked]="com.visible">Approve</mat-slide-toggle>
+          - <span style="color: #999; font-size: 12px;">{{com.dateCreated | date:'short'}} <span *ngIf="com.visible">|
+              {{com.dateApproved | date:'short'}}</span></span>
+        </div>
+        <div style="margin: 5px 10px;">
+          {{com.message}}
+        </div>
+
+      </div>
+
+    </div>
+  </mat-card-actions>
+</mat-card> -->

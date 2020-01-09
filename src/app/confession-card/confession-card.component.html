@@ -1,0 +1,26 @@
+<mat-card (click)="expanded = !expanded">
+  <mat-card-header style="font: 120%;">
+    <div style="display: inline-block;  width: 70px; padding: 0px 10px;">
+      <div style="background-color: red">
+        SCORE
+      </div>
+    </div>
+    <div style="display: inline-block; ">
+      <div>
+        <strong>To</strong> {{confession.to}}
+      </div>
+      <div *ngIf="confession.from" style="color: #999">
+        <strong>From</strong> {{confession.from}}
+      </div>
+    </div>
+
+  </mat-card-header>
+  <mat-card-content class="example-element-detail" [@detailExpand]="expanded ? 'expanded' : 'collapsed'">
+    <div>
+      {{confession.message}}
+    </div>
+    <div style="margin-top: 20px">
+      
+    </div>
+  </mat-card-content>
+</mat-card>

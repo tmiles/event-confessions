@@ -1,0 +1,47 @@
+<div class="container" style="padding: 10px 0px;" *ngIf="homeData$ | async as data">
+  <mat-card *ngIf="data.homeIntro">
+    <mat-card-header>
+      <mat-card-title>
+        <h1>{{data.homeIntro.title}}</h1>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div [innerHTML]="data.homeIntro.html"></div>
+      <hr>
+      <p>
+        This app is currently on version: v{{versionNumber}}
+      </p>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <h2>Available Events</h2>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item *ngFor="let event of events$ | async">
+          <mat-icon
+            mat-list-icon
+            matTooltip="Visit confessions"
+            [routerLink]="'/' + event.id"
+            >forward</mat-icon
+          >
+          <h4 mat-line>{{ event.formal_name }}</h4>
+          <p mat-line>
+            {{ event.dateCreated.toDate() | date: "longDate" }}
+          </p></mat-list-item
+        >
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="data.contact">
+    <mat-card-header>
+      <mat-card-title>{{data.contact.title}}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content [innerHTML]="data.contact.html"></mat-card-content>
+  </mat-card>
+</div>

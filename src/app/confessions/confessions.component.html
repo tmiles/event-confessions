@@ -1,0 +1,227 @@
+<div *ngIf="event" style="width: 90%; margin: 10px auto; padding-top: 20px; height: 100vh">
+  <mat-card *ngIf="event.password != '' && !loggedIn">
+    <mat-card-header>
+      <mat-card-title>
+        <h2>{{ event.formal_name }} Confessions</h2>
+      </mat-card-title>
+    </mat-card-header>
+    <form [formGroup]="form">
+      <formly-form
+        [model]="loginModel"
+        [fields]="fields"
+        [options]="options"
+        [form]="form"
+      >
+      </formly-form>
+      <button mat-raised-button [disabled]="loginModel.pass != event.password" (click)="checkPass()">Login</button>
+    </form>
+  </mat-card>
+  <div *ngIf="event.password && loggedIn">
+    <div class="example-container">
+      <mat-card style="margin-bottom: 10px">
+        <mat-card-header>
+          <mat-card-title>
+            <h2>{{ event.formal_name }} Confessions</h2>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content *ngIf="event.submitForm">
+          <h3>Write a confession</h3>
+          <form [formGroup]="form" (ngSubmit)="submit()">
+            <formly-form
+              [model]="model"
+              [fields]="event.submitForm"
+              [options]="options"
+              [form]="form"
+            >
+              <file-pond
+                #myPond
+                *ngIf="model && model['to']"
+                [options]="pondOptions"
+                (onaddfile)="pondHandleAddFile($event)"
+                (onremovefile)="pondHandleRemoveFile($event)"
+              >
+              </file-pond>
+
+              <button
+                mat-raised-button
+                type="submit"
+                [disabled]="!form.valid || pending"
+              >
+                <span *ngIf="!pending">Submit</span>
+                <span *ngIf="pending">PENDING</span>
+              </button>
+            </formly-form>
+          </form>
+          <!-- <mat-card *ngIf="showConfirmation">
+            Your confession has been submitted, awaiting admin approval.
+            <br />
+            <button mat-button (click)="showConfirmation = false" color="primary">dismiss</button>
+          </mat-card> -->
+        </mat-card-content>
+      </mat-card>
+      <ng-container *ngIf="confessions && confessions.length > 0; else noItems">
+        <div
+          class="input-group input-group-md"
+          style="margin-top: 10px; width: 100%"
+        >
+          <div class="input-group-prepend">
+            <span class="input-group-text">Search</span>
+          </div>
+          <input
+            type="text"
+            class="form-control"
+            aria-label="Sizing example input"
+            aria-describedby="inputGroup-sizing-lg"
+            [(ngModel)]="searchField"
+          />
+        </div>
+        <div class="row">
+          <h4>Sorting</h4>
+          <mat-form-field class="col-6">
+            <mat-label>Sort Field</mat-label>
+            <mat-select [(value)]="sortField">
+              <!-- <mat-option value="dateApproved">Approve Date</mat-option> -->
+              <mat-option value="dateCreated">Date</mat-option>
+              <mat-option value="score">Popularity</mat-option>
+              <mat-option value="commentCount">Comments</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="col-6">
+            <mat-label>Sort Direction</mat-label>
+            <mat-select [(value)]="sortValue">
+              <mat-option value="ascending">Ascending</mat-option>
+              <mat-option value="descending">Descending</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!-- <app-confession-card *ngFor="let confess of confessions" class="col-lg-4 col-md-6 col-sm-12" [confession]="confess"></app-confession-card> -->
+        <h3>Total Confessions: {{ confessions.length }}</h3>
+        <div style="margin-bottom: 40px;">
+          <span
+            *ngFor="
+              let confess of confessions
+                | filter: searchField:searchFields
+                | sort: sortField:sortValue;
+              trackBy: trackByFn
+            "
+          >
+            <app-confession
+              style="width: 80%; margin: 0px auto"
+              [confession]="confess"
+              (clickReact)="react($event, confess)"
+              (clickComment)="comment($event, confess)"
+            ></app-confession>
+          </span>
+        </div>
+        <!-- <span *ngIf="i % 2 == 0 && i + 1 < confessions.length"> -->
+      </ng-container>
+      <ng-template #noItems>
+        <div>
+          <strong style="font-size: 14px">No confessions</strong>
+        </div>
+      </ng-template>
+      <!--
+    <mat-card style="margin: 20px" *ngIf="false">
+      <mat-card-header>
+        <mat-card-title>
+          <h3>Confessions Table</h3>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field style="width: 100%">
+          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
+        </mat-form-field>
+        <!-- Table Start
+        <table mat-table class="table animate table-striped" [dataSource]="dataSource" *ngIf="dataSource"
+          multiTemplateDataRows class="mat-elevation-z8">
+          <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumns; let i = index ">
+            <th mat-header-cell *matHeaderCellDef> {{displayedColumnsHeaders[i]}} </th>
+            <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+          </ng-container>
+
+          <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns
+          <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+              <div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                CONTENT HERE
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"
+            [class.example-expanded-row]="expandedElement === element" (click)="expandedElement = expandedElement === element ? null : element">
+          </tr>
+          <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+        </table> -->
+      <!-- Table End -->
+
+      <!-- <mat-table #table class="table animate table-striped" style="width: 100%" [dataSource]="dataSource" matSort *ngIf="dataSource" multiTemplateDataRows>
+          <ng-container matColumnDef="dateCreated">
+            <mat-header-cell style="max-width: 120px !important" *matHeaderCellDef mat-sort-header>Date</mat-header-cell>
+            <mat-cell style="max-width: 120px !important" *matCellDef="let confession">
+              {{confession.dateCreated | date:'shortDate'}}
+              <br />
+              {{ confession.dateCreated | date:'shortTime'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="addressees">
+            <mat-header-cell *matHeaderCellDef mat-sort-header style="max-width: 150px !important"> Addressees
+            </mat-header-cell>
+            <mat-cell *matCellDef="let confession" style="max-width: 150px !important">
+              <p><strong>{{ confession.to }}</strong> <span *ngIf="confession.from"><br /> from <strong>{{confession.from}}</strong></span></p>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="message">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Message </mat-header-cell>
+            <mat-cell *matCellDef="let confession">
+              {{confession.message}}
+            </mat-cell>
+          </ng-container>
+
+          <!-- <ng-container matColumnDef="expandedDetail">
+            <mat-cell *matCellDef="let detail">
+              CONTENT HERE
+            </mat-cell>
+          </ng-container> -->
+
+      <!-- <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
+              <div class="example-element-detail"
+                   [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                <div class="example-element-diagram">
+                  <div class="example-element-position"> {{element.position}} </div>
+                  <div class="example-element-symbol"> {{element.symbol}} </div>
+                  <div class="example-element-name"> {{element.name}} </div>
+                  <div class="example-element-weight"> {{element.weight}} </div>
+                </div>
+                <div class="example-element-description">
+                  {{element.description}}
+                  <span class="example-element-description-attribution"> -- Wikipedia </span>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row matRipple *matRowDef="let row; columns: displayedColumns;" class="element-row" [class.expanded]="expandedElement == row"
+          (click)="expandedElement = row"></mat-row>
+        <mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow" [@detailExpand]="row.element == expandedElement ? 'expanded' : 'collapsed'"
+          style="overflow: hidden">
+        </mat-row>
+
+        </mat-table>
+        <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]"></mat-paginator>
+      </mat-card-content>
+
+    </mat-card>
+  </div>
+</div>
+
+<!--
+    Reference:
+    https://github.com/angular/material2/blob/master/src/material-examples/table-expandable-rows
+
+  -->
+    </div>
+  </div>
+</div>
