@@ -15,7 +15,7 @@ import { DataService } from '../services/data.service';
 export class HomeComponent implements OnInit {
   events$: Observable<any[]> = null;
   homeData$: Observable<any> = null;
-  public versionNumber = "5.0.0";
+  public versionNumber = "6.0.0";
 
   constructor(
     private ds: DataService

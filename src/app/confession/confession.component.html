@@ -1,20 +1,20 @@
 <mat-card
   *ngIf="confession"
-  style="padding: 20px 20px"
+  style="padding: 5px 10px"
   class="mat-elevation-z3"
 >
-  <mat-card-header>
-    <mat-card-title>
+  <mat-card-header style="margin: 0px;">
+    <mat-card-title style="margin: 0px;">
       <strong style="font-size: 12pt;">{{ confession.to }}</strong>
+      <!-- <div class="text-right" style="display: inline-block;">
+        <button mat-icon-button ><mat-icon>more_vert</mat-icon></button>
+      </div> -->
     </mat-card-title>
     <mat-card-subtitle>
       <span *ngIf="confession.from" style="font-size: 12pt;"
         >from
         <strong>{{ confession.from }}</strong>
-      </span>
-      <div style="font-size: 10pt;">
-        {{ confession.dateCreated | date: "short" }}
-      </div>
+      </span> <span style="font-size: 8pt;"> {{ confession.dateCreated | date: "short" }} </span>
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content style="max-height: 300px; overflow-y: scroll; padding: 0px 10px 5px 5px">
@@ -37,8 +37,22 @@
       </div>
       <p style="font-size: 12pt">{{ confession.message }}</p>
   </mat-card-content>
-  <mat-card-actions class="row">
-    <div class="col-sm-6 col-xs-6">
+  <mat-card-actions style="padding-bottom: 10px;">
+    <div style="font-size: 8pt;" *ngIf="confession.score > 0">
+      {{confession.score}} Reactions
+    </div>
+    <div style="display: flex; justify-content: center; margin-bottom: 10px;">
+      <div style="width: 33%;">
+        <button mat-button style="width: 100%;" (click)="showReactions = !showReactions">Like</button>
+      </div>
+      <div style="width: 33%;">
+        <button mat-button style="width: 100%;" (click)="showComments = !showComments">Comment</button>
+      </div>
+      <div style="width: 33%;">
+        <button mat-button style="width: 100%;">Share</button>
+      </div>
+    </div>
+    <div *ngIf="showReactions">
       <mat-button-toggle-group class="mat-elevation-z0">
         <mat-button-toggle
           class="mat-elevation-z0"
@@ -56,7 +70,27 @@
       </mat-button-toggle-group>
     </div>
 
-    <div class="col-sm-6 col-xs-6 text-right">
+
+
+    <!-- <div class="col-sm-6 col-md-12 col-lg-12" style="margin-bottom: 20px;">
+      <mat-button-toggle-group class="mat-elevation-z0">
+        <mat-button-toggle
+          class="mat-elevation-z0"
+          style="width: 100%; min-height: 60px; padding-top: 5px; width: 25%; margin: 0px auto;"
+          *ngFor="let val of reactionTypes"
+          [value]="val.data"
+          (click)="react(val.data)"
+        >
+          <i [class]="val.icon"></i>
+          <span
+            style="position: relative; left: 5px; bottom: 15px; font-size: 9px"
+            >{{ confession.reaction[val.data] }}</span
+          >
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div> -->
+
+    <!-- <div class="col-sm-6 col-md-12 col-lg-12">
       <button
         mat-raised-button
         *ngIf="confession.comments"
@@ -69,12 +103,12 @@
       <br />
       <a
         (click)="reportConfession(confession)"
-        style="margin-left: 20px; font-size: 10px"
+        style="font-size: 10px; cursor:pointer;"
         >Report Confession</a
       >
       <button mat-raised-button *ngIf="!confession.comments">Comment</button>
-    </div>
-    <div *ngIf="showComments" style="margin: 10px; padding: 15px 10px;">
+    </div> -->
+     <div *ngIf="showComments" style="margin: 10px; padding: 15px 10px;">
       <mat-form-field style="width: 90%; margin: 10px auto; font-size: 14px">
         <input
           matInput
@@ -98,8 +132,6 @@
       </mat-form-field>
       <div style="width: 98%; margin: 5px auto; padding-left: 5px">
         <div *ngFor="let c of confession.comments">
-          <!-- Todo filter approved ones -->
-
           <div
             *ngIf="c.visible"
             style="padding: 20px; border-radius: 5px; margin-bottom: 4px; background-color: rgb(236, 238, 239)"

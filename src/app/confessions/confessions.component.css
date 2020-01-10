@@ -10,10 +10,31 @@ mat-card {
     margin-left: 40px;
   }
 
+#confessions-container {
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  flex-wrap: wrap;
+}
 
+.confession-card {
+  max-width: 350px;
+  margin: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .confession-card {
+    width: 100%;
+    max-width: 100%;
+  }
+}
 
 cdk-virtual-scroll-viewport {
 height: 80vh;
+}
+
+.mat-card-header-text {
+  margin: 0px;
 }
 .mat-row {
     padding: 5px 0px;
