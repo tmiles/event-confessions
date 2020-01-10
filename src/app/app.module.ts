@@ -61,6 +61,9 @@ import { HomeComponent } from './home/home.component';
 registerPlugin(FilePondPluginFileValidateSize);
 registerPlugin(FilePondPluginFileValidateType);
 
+
+import { AutosizeTextComponent } from "./autosize-text/autosize-text.component";
+
 const MaterialModules = [
   MatProgressSpinnerModule,
   MatDividerModule,
@@ -110,6 +113,7 @@ const appRoutes: Routes = [
     FilterPipe,
     ArraySortPipe,
     HomeComponent,
+    AutosizeTextComponent
   ],
   imports: [
     BrowserModule,
@@ -126,7 +130,15 @@ const appRoutes: Routes = [
     MaterialModules,
     FormsModule,
     ReactiveFormsModule,
-    FormlyModule.forRoot(),
+    FormlyModule.forRoot({
+      types: [
+        {
+          name: "textarea-auto-resize",
+          component: AutosizeTextComponent,
+          wrappers: ["form-field"]
+        },
+      ]
+    }),
     FormlyMaterialModule,
     FilePondModule
   ],

@@ -3,7 +3,11 @@
 Ported to stackblitz
 
 ## Features
-Event confessions now don't re-require passwords after 2 days if same device.
+1. Event confessions now don't re-require passwords after 2 days if same device.
+2. Changed to a card grid structure
+3. Changed the bottom card actions (likes, comments etc)
+4. Changes some of the top usability filter/customization tools
+5. Reduced the font overall throughout the page
 
 # 3.1.0 (04.08.19)
 ## Admin
