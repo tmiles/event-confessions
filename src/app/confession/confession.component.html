@@ -1,36 +1,28 @@
 <mat-card *ngIf="confession" style="padding: 15px" class="mat-elevation-z3">
   <mat-card-header style="margin: 0px;">
     <mat-card-title
-      style="margin: 0px; display: flex; justify-content: space-between"
+      style="margin: 0px; width: 100%;display: flex; justify-content: space-between"
     >
       <strong style="font-size: 12pt;">{{ confession.to }}</strong>
-      <button
-        mat-icon-button
-        [matMenuTriggerFor]="menu"
-        #trigger="matMenuTrigger"
-        aria-label="Confession management button"
-        style="margin-left: auto; margin-top: -10px;"
-      >
-        <mat-icon>more_vert</mat-icon>
-      </button>
+
       <mat-menu #menu="matMenu">
-        <button style="font-size: 11px;" mat-menu-item disabled="true">
+        <!-- <button style="font-size: 11px;" mat-menu-item disabled="true">
           <mat-icon>share</mat-icon>
-          <!-- <span>Share</span> -->
+          <!-- <span>Share</span>
         </button>
         <button style="font-size: 11px;" mat-menu-item disabled="true">
           <mat-icon>notifications_on</mat-icon>
           <!-- <mat-slide-toggle
             [checked]="checked">
-        </mat-slide-toggle> -->
-        </button>
+        </mat-slide-toggle> 
+        </button> -->
         <button
           style="font-size: 11px;"
           mat-menu-item
           (click)="reportConfession(confession)"
         >
           <mat-icon matTooltip="Report">report_problem</mat-icon>
-          <!-- <span>Report</span> -->
+          <span>Report</span>
         </button>
       </mat-menu>
     </mat-card-title>
@@ -42,6 +34,15 @@
         }}</strong>
       </span>
     </mat-card-subtitle>
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="menu"
+      #trigger="matMenuTrigger"
+      aria-label="Confession management button"
+      style="margin-left: auto; margin-top: -10px;"
+    >
+      <mat-icon>more_vert</mat-icon>
+    </button>
   </mat-card-header>
   <mat-card-content style="padding: 0px 10px 5px 0px">
     <p style="font-size: 12px;">{{ confession.message }}</p>

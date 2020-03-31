@@ -10,29 +10,6 @@ import { AngularFireStorageModule } from "@angular/fire/storage";
 import { AngularFireMessagingModule } from "@angular/fire/messaging";
 import { AngularFireAnalyticsModule, CONFIG } from "@angular/fire/analytics";
 import { ChartsModule } from "ng2-charts";
-import {
-  MatDividerModule,
-  MatCardModule,
-  MatListModule,
-  MatIconModule,
-  MatTabsModule,
-  MatProgressSpinnerModule,
-  MatButtonModule,
-  MatFormFieldModule,
-  MatBadgeModule,
-  MatSlideToggleModule,
-  MatTooltipModule,
-  MatInputModule,
-  MatButtonToggleModule,
-  MatTableModule,
-  MatPaginatorModule,
-  MatSortModule,
-  MatDialogModule,
-  MatSelectModule,
-  MatMenuModule
-} from "@angular/material/";
-import { StorageServiceModule } from "angular-webstorage-service";
-// import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { FormlyModule } from "@ngx-formly/core";
@@ -61,6 +38,26 @@ import { FilePondModule, registerPlugin } from "ngx-filepond";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
 import { HomeComponent } from "./home/home.component";
+
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatCardModule } from "@angular/material/card";
+import { MatIconModule } from "@angular/material/icon";
+import { MatListModule } from "@angular/material/list";
+import { MatTabsModule } from "@angular/material/tabs";
+import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatBadgeModule } from "@angular/material/badge";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { MatTableModule } from "@angular/material/table";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatSortModule } from "@angular/material/sort";
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatSelectModule } from "@angular/material/select";
+import { MatMenuModule } from "@angular/material/menu";
 
 registerPlugin(FilePondPluginFileValidateSize);
 registerPlugin(FilePondPluginFileValidateType);
@@ -130,8 +127,6 @@ const appRoutes: Routes = [
     InfiniteScrollModule,
     RouterModule.forRoot(appRoutes),
     ScrollingModule,
-    // FlexLayoutModule,
-    StorageServiceModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFireAnalyticsModule,

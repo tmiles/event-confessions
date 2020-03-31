@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
-import { Observable, BehaviorSubject, pipe } from "rxjs";
+import { Observable } from "rxjs";
 import {
   map,
   tap,
@@ -12,9 +12,7 @@ import {
   finalize
 } from "rxjs/operators";
 import { Confession, Comment } from "../types/types";
-import { LOCAL_STORAGE, WebStorageService } from "angular-webstorage-service";
 import { AngularFireStorage } from "@angular/fire/storage";
-import { throwMatDialogContentAlreadyAttachedError } from "@angular/material";
 
 @Injectable({
   providedIn: "root"
@@ -25,7 +23,6 @@ export class DataService {
 
   constructor(
     private db: AngularFirestore,
-    @Inject(LOCAL_STORAGE) private storage: WebStorageService,
     private afstore: AngularFireStorage
   ) {
     // this.summarizeData("sww20").then();
@@ -219,19 +216,19 @@ export class DataService {
     return c;
   }
   updateVotes(eventID, confession, voteType: string): Promise<void> {
-    const dat = this.storage.get(confession.id);
+    const dat = JSON.parse(localStorage.getItem(confession.id));
     if (dat) {
       // change vote type or remove vote
       confession = this.react(confession, dat, "sub"); // subtract old vote
-      this.storage.set(confession.id, null);
+      localStorage.setItem(confession.id, null);
       if (voteType !== dat) {
         // reassign vote
         confession = this.react(confession, voteType, "plus"); // assigns new one
-        this.storage.set(confession.id, voteType); // reassign vote
+        localStorage.setItem(confession.id, JSON.stringify(voteType)); // reassign vote
       }
     } else {
       // haven't voted yet for this one
-      this.storage.set(confession.id, voteType); // remember what vote type it is
+      localStorage.setItem(confession.id, JSON.stringify(voteType)); // remember what vote type it is
       confession = this.react(confession, voteType, "plus");
     }
     return this.updateConfession(eventID, confession.id, confession);
@@ -561,14 +558,14 @@ export class DataService {
 
   /** local storage */
   assignLocalPass(eventID: string): boolean {
-    let events = this.storage.get(`events`) || {};
+    let events = JSON.parse(localStorage.getItem(`events`)) || {};
     events[eventID] = new Date();
-    this.storage.set("events", events);
+    localStorage.setItem("events", JSON.stringify(events));
     return true;
   }
 
   checkLocalPass(eventID: string, expLength: number = 7): boolean {
-    let events = this.storage.get(`events`) || {};
+    let events = JSON.parse(localStorage.getItem(`events`)) || {};
     if (!events || !events[eventID]) {
       return false;
     }

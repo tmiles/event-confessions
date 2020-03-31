@@ -3,12 +3,10 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { DataService } from "../services/data.service";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { AngularFireAnalytics } from "@angular/fire/analytics";
-import {
-  MatDialog,
-  MatPaginator,
-  MatSort,
-  MatTableDataSource
-} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
+import { MatTableDataSource } from "@angular/material/table";
 import { FormGroup } from "@angular/forms";
 import { FormlyFormOptions, FormlyFieldConfig } from "@ngx-formly/core";
 import {

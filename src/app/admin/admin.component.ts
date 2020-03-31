@@ -3,12 +3,10 @@ import { DataService } from "../services/data.service";
 import { FormGroup } from "@angular/forms";
 import { FormlyFormOptions, FormlyFieldConfig } from "@ngx-formly/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import {
-  MatPaginator,
-  MatSort,
-  MatTableDataSource,
-  MatDialog
-} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
+import { MatTableDataSource } from "@angular/material/table";
 import { ConfessionDialogComponent } from "../confession-dialog/confession-dialog.component";
 import Swal from "sweetalert2";
 import { first } from "rxjs/operators";

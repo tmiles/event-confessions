@@ -1,5 +1,5 @@
 import { Component, ViewChild, OnInit } from "@angular/core";
-import { MatInput } from "@angular/material";
+import { MatInput } from "@angular/material/input";
 import { FieldType } from "@ngx-formly/material";
 
 /**
