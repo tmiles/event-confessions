@@ -22,8 +22,7 @@ import { FieldType } from "@ngx-formly/material";
     ></textarea>
   `
 })
-export class AutosizeTextComponent extends FieldType
-  implements OnInit {
+export class AutosizeTextComponent extends FieldType implements OnInit {
   /** Basic constructor */
 
   constructor() {

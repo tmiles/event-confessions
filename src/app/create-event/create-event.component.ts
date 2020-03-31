@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { FormlyFormOptions, FormlyFieldConfig } from "@ngx-formly/core";
 import { DataService } from "../services/data.service";
@@ -16,7 +16,8 @@ import Swal from "sweetalert2";
     `
   ]
 })
-export class CreateEventComponent {
+export class CreateEventComponent implements OnInit {
+  @Input() formType: string = "public";
   loginForm = new FormGroup({});
   loginModel: any = {};
   loginOptions: FormlyFormOptions = {};
@@ -94,11 +95,37 @@ export class CreateEventComponent {
 
   constructor(private ds: DataService) {}
 
+  ngOnInit() {
+    if (this.formType === "admin") {
+      // Allow updating
+    } else if (this.formType === "public") {
+      this.fields.push({
+        key: "contactName",
+        type: "input",
+        templateOptions: {
+          required: true,
+          label: "Contact Name",
+          placeholder: "Contact Name"
+        }
+      });
+      this.fields.push({
+        key: "contactEmail",
+        type: "input",
+        templateOptions: {
+          required: true,
+          label: "Contact Email",
+          placeholder: "Contact Email"
+        }
+      });
+    }
+  }
+
+  // TODO ensure document doesn't already exist first
   create() {
     Swal.fire({
       title: "Event Creation",
       text: "Create/edit event?",
-      type: "warning",
+      icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
@@ -109,10 +136,12 @@ export class CreateEventComponent {
           Swal.fire({
             title: "Event modified",
             text: `${val}`,
-            type: "success"
+            icon: "success"
           });
         });
       }
     });
   }
+
+  update() {}
 }

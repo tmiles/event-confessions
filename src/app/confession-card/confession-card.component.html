@@ -6,21 +6,19 @@
       </div>
     </div>
     <div style="display: inline-block; ">
-      <div>
-        <strong>To</strong> {{confession.to}}
-      </div>
+      <div><strong>To</strong> {{ confession.to }}</div>
       <div *ngIf="confession.from" style="color: #999">
-        <strong>From</strong> {{confession.from}}
+        <strong>From</strong> {{ confession.from }}
       </div>
     </div>
-
   </mat-card-header>
-  <mat-card-content class="example-element-detail" [@detailExpand]="expanded ? 'expanded' : 'collapsed'">
+  <mat-card-content
+    class="example-element-detail"
+    [@detailExpand]="expanded ? 'expanded' : 'collapsed'"
+  >
     <div>
-      {{confession.message}}
+      {{ confession.message }}
     </div>
-    <div style="margin-top: 20px">
-      
-    </div>
+    <div style="margin-top: 20px"></div>
   </mat-card-content>
 </mat-card>

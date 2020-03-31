@@ -38,9 +38,11 @@ export class ConfessionDialogComponent implements OnInit {
   }
 
   moderateComment(id, approve: boolean) {
-    this.d_s.moderateComment(this.eventID, this.confession, id, approve).then((val) => {
-      this.confession.visible = approve;
-    });
+    this.d_s
+      .moderateComment(this.eventID, this.confession, id, approve)
+      .then(val => {
+        this.confession.visible = approve;
+      });
   }
 
   moderateConfession(id, approve: boolean) {

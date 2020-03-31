@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { DataService } from "../services/data.service";
 import { AngularFirestore } from "@angular/fire/firestore";
+import { AngularFireAnalytics } from "@angular/fire/analytics";
 import {
   MatDialog,
   MatPaginator,
@@ -18,8 +19,8 @@ import {
   trigger
 } from "@angular/animations";
 import { Confession } from "../types/types";
-import Swal from 'sweetalert2';
-import { first } from 'rxjs/operators';
+import Swal from "sweetalert2";
+import { first } from "rxjs/operators";
 
 @Component({
   selector: "app-confessions",
@@ -105,40 +106,52 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
     private d_s: DataService,
     private route: ActivatedRoute,
     private router: Router,
-    public dialog: MatDialog
-  ) {}
+    public dialog: MatDialog,
+    private analytics: AngularFireAnalytics
+  ) {
+    analytics.logEvent("loaded", { loaded: true });
+  }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
       // todo load the correct event
       this.eventID = params["id"];
+      this.analytics.updateConfig({ DEBUG_MODE: true });
+      this.analytics.logEvent("event_open", { eid: this.eventID });
+      this.analytics.logEvent("custom_event", { eid: this.eventID });
+      console.log("Fired analytics");
 
-      this.d_s.getEvent(this.eventID).pipe(first()).toPromise().then(res => {
-        if(!res) {
-          Swal.fire({
-            type: "error",
-            title: 'No event',
-            text: 'Confession Event not found',
-            timer: 1500,
-            showConfirmButton: false,
-            showCancelButton: false,
-            showCloseButton: false
-          }).then(() => {
-            this.router.navigate(['../'], {relativeTo: this.route});
-          })
-        }
-        this.event = res;
-        // this.d_s.assignLocalPass(this.eventID); // for successful logins
-        if (this.d_s.checkLocalPass(this.eventID)) { // If logged in within 2 days
-          this.loggedIn = true; // bypass security
-        }
-        this.fetchData();
-      })
+      this.d_s
+        .getEvent(this.eventID)
+        .pipe(first())
+        .toPromise()
+        .then(res => {
+          if (!res) {
+            Swal.fire({
+              icon: "error",
+              title: "No event",
+              text: "Confession Event not found",
+              timer: 1500,
+              showConfirmButton: false,
+              showCancelButton: false,
+              showCloseButton: false
+            }).then(() => {
+              this.router.navigate(["../"], { relativeTo: this.route });
+            });
+          }
+          this.event = res;
+          // this.d_s.assignLocalPass(this.eventID); // for successful logins
+          if (this.d_s.checkLocalPass(this.eventID)) {
+            // If logged in within 2 days
+            this.loggedIn = true; // bypass security
+          }
+          this.fetchData();
+        });
     });
   }
 
   checkPass() {
-    if(this.loginModel.pass === this.event.password) {
+    if (this.loginModel.pass === this.event.password) {
       this.loggedIn = true;
       return this.d_s.assignLocalPass(this.eventID);
     }
@@ -217,18 +230,20 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
       commentPending: 0,
       status: "Pending Approval"
     };
-    this.d_s.createConfession(this.eventID, data, null, this.lastUploadedPhoto).then(() => {
-      this.myPond.removeFiles();
-      // this.showConfirmation = true;
-      this.model = {};
-      Swal.fire({
-        title: "Submitted",
-        text: "Submitted confession, pending admin approval",
-        type: "success"
+    this.d_s
+      .createConfession(this.eventID, data, null, this.lastUploadedPhoto)
+      .then(() => {
+        this.myPond.removeFiles();
+        // this.showConfirmation = true;
+        this.model = {};
+        Swal.fire({
+          title: "Submitted",
+          text: "Submitted confession, pending admin approval",
+          icon: "success"
+        });
+        this.pending = false;
+        // clear image
       });
-      this.pending = false;
-      // clear image
-    });
   }
 
   trackByFn(index, item) {

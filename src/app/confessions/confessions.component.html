@@ -1,4 +1,7 @@
-<div *ngIf="event" style="width: 90%; margin: 10px auto; padding-top: 20px; height: 100vh">
+<div
+  *ngIf="event"
+  style="width: 90%; margin: 10px auto; padding-top: 20px; height: 100vh"
+>
   <mat-card *ngIf="event.password != '' && !loggedIn">
     <mat-card-header>
       <mat-card-title style="text-align: center">
@@ -13,7 +16,13 @@
         [form]="form"
       >
       </formly-form>
-      <button mat-raised-button [disabled]="loginModel.pass != event.password" (click)="checkPass()">Login</button>
+      <button
+        mat-raised-button
+        [disabled]="loginModel.pass != event.password"
+        (click)="checkPass()"
+      >
+        Login
+      </button>
     </form>
   </mat-card>
   <div *ngIf="event.password && loggedIn">
@@ -33,17 +42,21 @@
               [options]="options"
               [form]="form"
             >
-            <div *ngIf="model && model['to']">
-              <label>Upload a photo - <span style="font-size: 8pt;">Under 10mb, .png, .jpg</span></label>
-              <file-pond
-                #myPond
-                
-                [options]="pondOptions"
-                (onaddfile)="pondHandleAddFile($event)"
-                (onremovefile)="pondHandleRemoveFile($event)"
-              >
-              </file-pond>
-            </div>
+              <div *ngIf="model && model['to']">
+                <label
+                  >Upload a photo -
+                  <span style="font-size: 8pt;"
+                    >Under 10mb, .png, .jpg</span
+                  ></label
+                >
+                <file-pond
+                  #myPond
+                  [options]="pondOptions"
+                  (onaddfile)="pondHandleAddFile($event)"
+                  (onremovefile)="pondHandleRemoveFile($event)"
+                >
+                </file-pond>
+              </div>
 
               <button
                 mat-raised-button
@@ -96,7 +109,7 @@
           <strong>Total Confessions: {{ confessions.length }}</strong>
         </div>
         <!-- <app-confession-card *ngFor="let confess of confessions" class="col-lg-4 col-md-6 col-sm-12" [confession]="confess"></app-confession-card> -->
-        
+
         <div style="margin-bottom: 40px;" id="confessions-container">
           <span
             class="confession-card"
@@ -108,11 +121,9 @@
             "
           >
             <app-confession
-              
               [confession]="confess"
               (clickReact)="react($event, confess)"
               (clickComment)="comment($event, confess)"
-              
             ></app-confession>
           </span>
         </div>

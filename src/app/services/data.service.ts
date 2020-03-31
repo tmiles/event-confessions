@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
-import { Observable, BehaviorSubject } from "rxjs";
+import { Observable, BehaviorSubject, pipe } from "rxjs";
 import {
   map,
   tap,
@@ -28,6 +28,7 @@ export class DataService {
     @Inject(LOCAL_STORAGE) private storage: WebStorageService,
     private afstore: AngularFireStorage
   ) {
+    // this.summarizeData("sww20").then();
     // this.duplicateDoc('events/sw-apex-4', 'events/u-16');
     // this.duplicateCollection('events/summit-12/confessions', 'events/summit-13/confessions');
     // this.collectionUpdate('events/summit-13/confessions');
@@ -335,7 +336,10 @@ export class DataService {
   }
 
   getHomeData(): Observable<any> {
-    return this.db.collection("configs").doc("home").valueChanges();
+    return this.db
+      .collection("configs")
+      .doc("home")
+      .valueChanges();
   }
 
   getEvent(eventName: string): Observable<any> {
@@ -345,7 +349,14 @@ export class DataService {
       .valueChanges();
   }
 
-  getAllEvents(active: boolean): Observable<any> {
+  getEventStats(eventID: string): Observable<any> {
+    return this.db
+      .collection("summaries")
+      .doc(eventID)
+      .valueChanges();
+  }
+
+  getAllEvents(active: boolean): Observable<any[]> {
     if (active === null) {
       return this.db.collection(`events`).valueChanges();
     }
@@ -355,6 +366,188 @@ export class DataService {
         ref.where("active", "==", active).orderBy("dateCreated", "desc")
       )
       .valueChanges();
+  }
+  /**
+   * @todo move to. cloud function or /api end point (proof of concept here)
+   */
+  async getAllEventStats(): Promise<any> {
+    let data = {
+      events: {},
+      lastUpdate: new Date(),
+      stats: {
+        events: 0,
+        confessions: { total: 0, accepted: 0, rejected: 0 },
+        comments: { total: 0, accepted: 0, rejected: 0, commented: 0 },
+        reactions: {
+          total: 0,
+          heart: 0,
+          sad: 0,
+          smile: 0,
+          thumbs: 0,
+          scored: 0
+        },
+        averages: {
+          confessions: 0,
+          comments: 0,
+          reactions: 0,
+          heart: 0,
+          sad: 0,
+          smile: 0,
+          thumbs: 0,
+          acceptRate: 0,
+          commentRate: 0
+        }
+      },
+      id: "all"
+    };
+    let events = await this.db
+      .collection("events", ref => ref.where("active", "==", true))
+      .get()
+      .pipe(first())
+      .toPromise();
+    for await (let ev of events.docs) {
+      let estats = await this.getEventStats(ev.id)
+        .pipe(first())
+        .toPromise();
+      if (!estats) {
+        // run stats here
+        estats = await this.summarizeData(ev.id);
+      }
+      data.events[ev.id] = {
+        stats: estats
+      };
+    }
+    data.stats.events = Object.keys(data.events).length;
+
+    // Iterate through all the events
+    Object.keys(data.events).forEach(eid => {
+      let edata = data.events[eid].stats;
+      data.stats.confessions.total += edata.confessions.total;
+      data.stats.confessions.accepted += edata.confessions.accepted;
+      data.stats.confessions.rejected += edata.confessions.rejected;
+
+      data.stats.comments.total += edata.comments.total;
+      data.stats.comments.accepted += edata.comments.accepted;
+      data.stats.comments.rejected += edata.comments.rejected;
+      data.stats.comments.commented += edata.comments.commented;
+
+      data.stats.reactions.total += edata.reactions.total;
+      data.stats.reactions.heart += edata.reactions.heart;
+      data.stats.reactions.sad += edata.reactions.sad;
+      data.stats.reactions.smile += edata.reactions.smile;
+      data.stats.reactions.thumbs += edata.reactions.thumbs;
+      data.stats.reactions.scored += edata.reactions.scored;
+    });
+
+    data.stats.averages.confessions =
+      data.stats.confessions.total / data.stats.events;
+    data.stats.averages.comments =
+      data.stats.comments.total / data.stats.comments.commented;
+    data.stats.averages.reactions =
+      data.stats.reactions.total / data.stats.confessions.accepted;
+    data.stats.averages.heart =
+      data.stats.reactions.heart / data.stats.reactions.scored;
+    data.stats.averages.sad =
+      data.stats.reactions.sad / data.stats.reactions.scored;
+    data.stats.averages.smile =
+      data.stats.reactions.smile / data.stats.reactions.scored;
+    data.stats.averages.thumbs =
+      data.stats.reactions.thumbs / data.stats.reactions.scored;
+    data.stats.averages.commentRate =
+      data.stats.comments.accepted / data.stats.comments.total;
+    data.stats.averages.acceptRate =
+      data.stats.confessions.accepted / data.stats.confessions.total;
+    await this.db
+      .doc("summaries/all")
+      .set(Object.assign({}, data), { merge: true });
+    console.log(data);
+    return data;
+  }
+
+  async updateEventSummary(): Promise<any> {
+    let data = {
+      events: {},
+      lastUpdate: new Date(),
+      stats: {
+        confessions: { total: 0, accepted: 0, rejected: 0 },
+        comments: { total: 0, accepted: 0, rejected: 0, commented: 0 },
+        reactions: {
+          total: 0,
+          heart: 0,
+          sad: 0,
+          smile: 0,
+          thumbs: 0,
+          scored: 0
+        },
+        averages: {
+          comments: 0,
+          reactions: 0,
+          heart: 0,
+          sad: 0,
+          smile: 0,
+          thumbs: 0,
+          acceptRate: 0,
+          commentRate: 0
+        }
+      },
+      id: "all"
+    };
+    let events = await this.db
+      .collection("events", ref => ref.where("active", "==", true))
+      .get()
+      .pipe(first())
+      .toPromise();
+    events.forEach(
+      ev =>
+        async function() {
+          let estats = await this.getEventStats(ev.id)
+            .pipe(first())
+            .toPromise();
+          if (!estats) {
+            // run stats here
+            estats = await this.summarizeData(ev.id);
+          }
+          events[ev.id] = {
+            stats: estats
+          };
+        }
+    );
+    // Iterate through all the events
+    Object.keys(data.events).forEach(eid => {
+      let edata = data.events[eid];
+      data.stats.confessions.total += edata.confessions.total;
+      data.stats.confessions.accepted += edata.confessions.accepted;
+      data.stats.confessions.rejected += edata.confessions.rejected;
+
+      data.stats.comments.total += edata.comments.total;
+      data.stats.comments.accepted += edata.comments.accepted;
+      data.stats.comments.rejected += edata.comments.rejected;
+      data.stats.comments.commented += edata.comments.commented;
+
+      data.stats.reactions.total += edata.reactions.total;
+      data.stats.reactions.heart += edata.reactions.heart;
+      data.stats.reactions.sad += edata.reactions.sad;
+      data.stats.reactions.smile += edata.reactions.smile;
+      data.stats.reactions.thumbs += edata.reactions.thumbs;
+      data.stats.reactions.scored += edata.reactions.scored;
+    });
+
+    data.stats.averages.comments =
+      data.stats.comments.total / data.stats.comments.commented || 0;
+    data.stats.averages.reactions =
+      data.stats.reactions.total / data.stats.confessions.accepted;
+    data.stats.averages.heart =
+      data.stats.reactions.heart / data.stats.reactions.scored;
+    data.stats.averages.sad =
+      data.stats.reactions.sad / data.stats.reactions.scored;
+    data.stats.averages.smile =
+      data.stats.reactions.smile / data.stats.reactions.scored;
+    data.stats.averages.thumbs =
+      data.stats.reactions.thumbs / data.stats.reactions.scored;
+    data.stats.averages.commentRate =
+      data.stats.comments.accepted / data.stats.comments.total || 0;
+    data.stats.averages.acceptRate =
+      data.stats.confessions.accepted / data.stats.confessions.total || 0;
   }
 
   checkEvent(eventName: string) {
@@ -367,17 +560,22 @@ export class DataService {
   }
 
   /** local storage */
-  assignLocalPass(eventID: string) : boolean{
+  assignLocalPass(eventID: string): boolean {
     let events = this.storage.get(`events`) || {};
     events[eventID] = new Date();
-    this.storage.set('events', events);
+    this.storage.set("events", events);
     return true;
   }
 
-  checkLocalPass(eventID: string) : boolean {
+  checkLocalPass(eventID: string, expLength: number = 7): boolean {
     let events = this.storage.get(`events`) || {};
-    if(!events || !events[eventID]) { return false; }
-    return (new Date(events[eventID]).getDate() - new Date().getDate() >= 2) ? false : true;
+    if (!events || !events[eventID]) {
+      return false;
+    }
+    return new Date(events[eventID]).getDate() - new Date().getDate() >=
+      expLength
+      ? false
+      : true;
   }
 
   /* Helper function */
@@ -539,6 +737,65 @@ export class DataService {
           .doc(`events/${eventID}/confessions/${id}`)
           .update({ reportCount: confession.reportCount + 1 });
       });
+  }
+
+  async summarizeData(eventID: string) {
+    let confessions = await this.db
+      .collection(`events/${eventID}/confessions`)
+      .get()
+      .pipe(first())
+      .toPromise();
+    let data = {
+      eventID: eventID,
+      lastUpdate: new Date(),
+      confessions: { total: confessions.size, accepted: 0, rejected: 0 },
+      comments: { total: 0, accepted: 0, rejected: 0, commented: 0 },
+      reactions: { total: 0, heart: 0, sad: 0, smile: 0, thumbs: 0, scored: 0 },
+      averages: {
+        comments: 0,
+        reactions: 0,
+        heart: 0,
+        sad: 0,
+        smile: 0,
+        thumbs: 0,
+        acceptRate: 0,
+        commentRate: 0
+      }
+    };
+
+    confessions.forEach(val => {
+      let v = val.data();
+      data.confessions.accepted += v.visible ? 1 : 0;
+      data.confessions.rejected +=
+        v.status && v.status.trim().toLowerCase() === "not approved" ? 1 : 0;
+      if (v.visible) {
+        data.reactions.total += v.score;
+        data.reactions.heart += v.reaction.heart;
+        data.reactions.sad += v.reaction.sad;
+        data.reactions.smile += v.reaction.smile;
+        data.reactions.thumbs += v.reaction.thumbs;
+        data.comments.total += v.commentCount;
+        data.comments.rejected += v.commentPending;
+        data.comments.accepted += v.commentCount - v.commentPending;
+        data.reactions.scored += v.score > 0 ? 1 : 0;
+        data.comments.commented += v.commentCount > 0 ? 1 : 0;
+      }
+    });
+
+    data.averages.comments = data.comments.total / data.comments.commented;
+    data.averages.reactions = data.reactions.total / data.confessions.accepted;
+    data.averages.heart = data.reactions.heart / data.reactions.scored;
+    data.averages.sad = data.reactions.sad / data.reactions.scored;
+    data.averages.smile = data.reactions.smile / data.reactions.scored;
+    data.averages.thumbs = data.reactions.thumbs / data.reactions.scored;
+    data.averages.commentRate = data.comments.accepted / data.comments.total;
+    data.averages.acceptRate =
+      data.confessions.accepted / data.confessions.total;
+    // Summary stuff
+    await this.db
+      .doc(`summaries/${eventID}`)
+      .set(Object.assign({}, data), { merge: true });
+    return Promise.resolve(data);
   }
 }
 

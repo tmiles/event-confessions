@@ -47,7 +47,7 @@ export class ConfessionComponent {
     Swal.fire({
       title: "Are you sure?",
       text: "This will mark this confession as inappropriate.",
-      type: "warning",
+      icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
@@ -58,7 +58,7 @@ export class ConfessionComponent {
           Swal.fire({
             title: "Feedback provided",
             text: "Thank you for providing your feedback!",
-            type: "success"
+            icon: "success"
           });
         });
       }

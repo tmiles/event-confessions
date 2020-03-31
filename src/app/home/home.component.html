@@ -1,16 +1,18 @@
-<div class="container" style="padding: 10px 0px;" *ngIf="homeData$ | async as data">
+<div
+  class="container"
+  style="padding: 10px 0px;"
+  *ngIf="homeData$ | async as data"
+>
   <mat-card *ngIf="data.homeIntro">
     <mat-card-header>
       <mat-card-title>
-        <h1>{{data.homeIntro.title}}</h1>
+        <h1>{{ data.homeIntro.title }}</h1>
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <div [innerHTML]="data.homeIntro.html"></div>
-      <hr>
-      <p>
-        This app is currently on version: v{{versionNumber}}
-      </p>
+      <hr />
+      <p>This app is currently on version: v{{ versionNumber }}</p>
     </mat-card-content>
   </mat-card>
 
@@ -21,11 +23,15 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <mat-list>
-        <mat-list-item *ngFor="let event of events$ | async">
+      <mat-list class="checked-list">
+        <mat-list-item
+          *ngFor="let event of events$ | async"
+          class="border-2px-gray"
+        >
           <mat-icon
             mat-list-icon
-            matTooltip="Visit confessions"
+            class="hover-icon"
+            matTooltip="See confessions"
             [routerLink]="'/' + event.id"
             >forward</mat-icon
           >
@@ -40,7 +46,7 @@
 
   <mat-card *ngIf="data.contact">
     <mat-card-header>
-      <mat-card-title>{{data.contact.title}}</mat-card-title>
+      <mat-card-title>{{ data.contact.title }}</mat-card-title>
     </mat-card-header>
     <mat-card-content [innerHTML]="data.contact.html"></mat-card-content>
   </mat-card>

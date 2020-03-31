@@ -1,19 +1,20 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Confession, Comment} from '../types/types';
+import { Component, OnInit, Input } from "@angular/core";
+import { Confession, Comment } from "../types/types";
 
 @Component({
-  selector: 'app-comments',
+  selector: "app-comments",
   template: `
-    <app-comment *ngFor="let item of confession.comments" [comment]="item"></app-comment>
+    <app-comment
+      *ngFor="let item of confession.comments"
+      [comment]="item"
+    ></app-comment>
   `,
-  styles: [],
+  styles: []
 })
 export class CommentsComponent implements OnInit {
-  @Input('confession') confession: Confession; // to access the 
-  
-  constructor() { }
+  @Input("confession") confession: Confession; // to access the
 
-  ngOnInit() {
-  }
+  constructor() {}
 
+  ngOnInit() {}
 }

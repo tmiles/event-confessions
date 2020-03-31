@@ -1,9 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  AfterViewInit
-} from "@angular/core";
+import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
 import { DataService } from "../services/data.service";
 import { FormGroup } from "@angular/forms";
 import { FormlyFormOptions, FormlyFieldConfig } from "@ngx-formly/core";
@@ -15,8 +10,8 @@ import {
   MatDialog
 } from "@angular/material";
 import { ConfessionDialogComponent } from "../confession-dialog/confession-dialog.component";
-import Swal from 'sweetalert2';
-import { first } from 'rxjs/operators';
+import Swal from "sweetalert2";
+import { first } from "rxjs/operators";
 
 @Component({
   selector: "app-admin",
@@ -77,26 +72,30 @@ export class AdminComponent implements OnInit, AfterViewInit {
     this.route.params.subscribe(params => {
       // todo load the correct event
       this.eventID = params["id"];
-      this.d_s.getEvent(this.eventID).pipe(first()).toPromise().then(res => {
-        if(!res) {
-          Swal.fire({
-            type: "error",
-            title: 'No event',
-            text: 'Confession Event not found',
-            timer: 1500,
-            showConfirmButton: false,
-            showCancelButton: false,
-            showCloseButton: false
-          }).then(() => {
-            this.router.navigate(['../../'], {relativeTo: this.route});
-          })
-
-        }
-        this.event = res;
-        if (this.d_s.checkLocalPass(this.eventID + "-admin")) { // If logged in within 2 days
-          this.authenticated = "edit";
-        }
-      })
+      this.d_s
+        .getEvent(this.eventID)
+        .pipe(first())
+        .toPromise()
+        .then(res => {
+          if (!res) {
+            Swal.fire({
+              icon: "error",
+              title: "No event",
+              text: "Confession Event not found",
+              timer: 1500,
+              showConfirmButton: false,
+              showCancelButton: false,
+              showCloseButton: false
+            }).then(() => {
+              this.router.navigate(["../../"], { relativeTo: this.route });
+            });
+          }
+          this.event = res;
+          if (this.d_s.checkLocalPass(this.eventID + "-admin")) {
+            // If logged in within 2 days
+            this.authenticated = "edit";
+          }
+        });
       // this.subscription = this.d_s.getConfessionsAdmin(this.eventID, null, 'status').subscribe(res => {
       //   //   this.dataSource = new MatTableDataSource(res);
       //   // }
@@ -161,7 +160,11 @@ export class AdminComponent implements OnInit, AfterViewInit {
   openDialog(confession): void {
     const dialogRef = this.dialog.open(ConfessionDialogComponent, {
       width: "750px",
-      data: { confession: confession, eventID: this.eventID, auth: this.authenticated },
+      data: {
+        confession: confession,
+        eventID: this.eventID,
+        auth: this.authenticated
+      }
     });
   }
 

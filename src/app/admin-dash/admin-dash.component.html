@@ -1,0 +1,211 @@
+<div class="container" style="padding-top: 40px;">
+  <h1>Admin Dashboard</h1>
+
+  <mat-card *ngIf="authenticated === ''">
+    <mat-card-content>
+      <h3>
+        Password Protected Center
+      </h3>
+      <form [formGroup]="loginForm">
+        <formly-form
+          [model]="loginModel"
+          [fields]="loginFields"
+          [options]="loginOptions"
+          [form]="loginForm"
+        >
+          <button
+            [disabled]="loginModel.pass === ''"
+            mat-raised-button
+            color="primary"
+            (click)="passSecurity(loginModel.pass)"
+          >
+            Submit
+          </button>
+        </formly-form>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="row" *ngIf="authenticated != ''">
+    <div class="col-md-4 col-sm-6 col-xs-12" style="padding: 10px;">
+      <div class="grayBg" style="padding: 10px">
+        <mat-card>
+          <div>
+            <span style="font-size: 14px; display: inline-block;"
+              >All events</span
+            >
+            <button
+              mat-icon-button
+              style="margin-left: auto; display: inline-block;"
+              (click)="createEvent = !createEvent"
+            >
+              <mat-icon>add_circle</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              (click)="d_s.getAllEventStats()"
+              matTooltip="Refresh all feed"
+            >
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </div>
+          <mat-list class="checkered-list" *ngIf="events$ | async as events">
+            <mat-list-item
+              *ngFor="let ev of events"
+              style="border-bottom: 2px solid #f9f9f9"
+            >
+              <span
+                mat-line
+                (click)="ev.opened = ev.opened ? false : true"
+                style="font-size: 11px; text-overflow: ellipsis; display: inline-block; width: 150px; pointer: cursor"
+                [ngStyle]="{ color: ev.active ? 'black' : 'red' }"
+                >{{ ev.formal_name }}</span
+              >
+              <span style="margin-left: auto">
+                <!-- <mat-slide-toggle [checked]="ev.active"></mat-slide-toggle> -->
+                <button mat-icon-button (click)="selectEvent(ev)">
+                  <mat-icon>chevron_right</mat-icon>
+                </button>
+              </span>
+              <p mat-line *ngIf="ev.opened" style="font-size: 10px;">
+                Active:
+                <mat-slide-toggle [checked]="ev.active"></mat-slide-toggle>
+                <button matTooltip="Delete event" disabled mat-icon-button>
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </p>
+            </mat-list-item>
+          </mat-list>
+        </mat-card>
+      </div>
+    </div>
+    <div
+      class="col-md-8 col-sm-6 col-xs-12"
+      style="padding: 10px;"
+      *ngIf="createEvent"
+    >
+      <app-create-event formType="admin"></app-create-event>
+    </div>
+    <div class="col-md-8 col-sm-6 col-xs-12" style="padding: 10px;">
+      <div class="grayBg" style="padding: 10px">
+        <div class="row" *ngIf="allStats$ | async as summary">
+          <mat-card
+            style="margin: 10px;"
+            class="text-center col-sm-6 col-md-4 col-lg-3"
+          >
+            <h3>{{ summary.stats.events }}</h3>
+            <p>Total Events</p>
+          </mat-card>
+          <mat-card
+            style="margin: 10px;"
+            class="text-center col-sm-6 col-md-4 col-lg-3"
+          >
+            <h3>{{ summary.stats.averages.confessions | number: "0.0-2" }}</h3>
+            <p>Avg Confessions/Event</p>
+          </mat-card>
+          <mat-card
+            style="margin: 10px;"
+            class="text-center col-sm-6 col-md-4 col-lg-3"
+          >
+            <h3>{{ summary.stats.averages.reactions | number: "0.0-2" }}</h3>
+            <p>Avg Reactions/Confession</p>
+          </mat-card>
+          <mat-card
+            style="margin: 10px;"
+            class="text-center col-sm-6 col-md-4 col-lg-3"
+          >
+            <h3>--</h3>
+            <p>Avg Confessions/Day</p>
+          </mat-card>
+        </div>
+        <mat-card *ngIf="false">
+          Dashboard Chart Recent number of creations Chart of them
+          (multiselector)
+        </mat-card>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="grayBg" style="padding: 10px" *ngIf="event">
+      <h3>Event stats - {{ event.formal_name }}</h3>
+      <div *ngIf="currentStats">
+        <!-- <span style="font-size: 10px;">Last updated: {{currentStats.lastUpdate.toDate() | date:'short'}}</span> -->
+        <span style="font-size: 10px; display: inline-block"
+          >Last updated: {{ currentStats.lastUpdate | date: "short" }}</span
+        >
+        <button
+          mat-icon-button
+          style="margin-left: auto; display: inline-block; font-size: 12px;"
+          (click)="forceUpdate(event.id)"
+        >
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <div style="display: flex; justify-content: center; flex-wrap: wrap;">
+          <div
+            style="width: 100px; display: inline-block; height: 100px; margin: 5px"
+            class="text-center"
+          >
+            <h3>{{ currentStats.confessions.total }}</h3>
+            <p>Confessions</p>
+          </div>
+          <div
+            style="width: 100px; display: inline-block; height: 100px; margin: 5px"
+            class="text-center"
+          >
+            <h3>{{ currentStats.reactions.total }}</h3>
+            <p>Reactions</p>
+          </div>
+          <div
+            style="width: 100px; display: inline-block; height: 100px; margin: 5px"
+            class="text-center"
+          >
+            <h3>{{ currentStats.comments.total }}</h3>
+            <p>Comments</p>
+          </div>
+          <div
+            style="width: 100px; display: inline-block; height: 100px; margin: 5px"
+            class="text-center"
+          >
+            <h3>
+              {{ currentStats.averages.acceptRate * 100 | number: "1.1-2" }}%
+            </h3>
+            <p>Accept Rate</p>
+          </div>
+          <div
+            style="width: 100px; display: inline-block; height: 100px; margin: 5px"
+            class="text-center"
+          >
+            <h3>{{ currentStats.averages.reactions | number: "1.1-2" }}</h3>
+            <p>Avg Reactions</p>
+          </div>
+          <div
+            style="width: 100px; display: inline-block; height: 100px; margin: 5px"
+            class="text-center"
+          >
+            <h3>{{ currentStats.averages.comments | number: "1.1-2" }}</h3>
+            <p>Avg Comments</p>
+          </div>
+        </div>
+        <div>
+          <mat-tab-group>
+            <mat-tab label="Pies">
+              <canvas
+                baseChart
+                [data]="pieChartData"
+                [labels]="pieChartLabels"
+                chartType="pie"
+                [options]="pieChartOptions"
+                [plugins]="pieChartPlugins"
+                [colors]="pieChartColors"
+                legend="true"
+              >
+              </canvas>
+            </mat-tab>
+            <mat-tab label="Bar"></mat-tab>
+            <mat-tab label="Line"></mat-tab>
+          </mat-tab-group>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

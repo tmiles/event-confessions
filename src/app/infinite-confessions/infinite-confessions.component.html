@@ -1,47 +1,101 @@
 <div *ngIf="event" style="height: 100vh;">
-    <mat-card *ngIf="event.password != '' && passModel.pass != event.password" style="width: 80%; margin: 10px auto;" >
-      <mat-card-header>
-        <mat-card-title>
-          <h2>{{event.formal_name}} Security</h2>
-        </mat-card-title>
-      </mat-card-header>
-      <form [formGroup]="passForm">
-        <formly-form [model]="passModel" [fields]="passFields" [options]="passOptions" [form]="passForm">
-        </formly-form>
-      </form>
-    </mat-card>
-  
-    <ng-container *ngIf="!event.password || passModel.pass === event.password">
-      <cdk-virtual-scroll-viewport style="height: 100%" *ngIf="confession_s | async as confessions" itemSize="100" (scrolledIndexChange)="nextBatch($event, (confessions[confessions.length - 1].dateCreated))">
-        <div style="width: 92%; margin: 10px auto 20px auto;">
-          <h1>{{event.formal_name}} Confessions App</h1>
-          <mat-card style="margin: 10px 0px; "  class="mat-elevation-z5" *ngIf="event.submitForm">
-            <mat-card-header >
-              <mat-card-title>
-                <h3>Write a confession</h3>
-              </mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <form [formGroup]="form" (ngSubmit)="submit()">
-                <formly-form [model]="model" [fields]="event.submitForm" [options]="options" [form]="form">
-                  <button mat-raised-button type="submit" [disabled]="!form.valid">Submit</button>
-                </formly-form>
-              </form>
-              <mat-card *ngIf="showConfirmation">
-                Your confession has been submitted, awaiting admin approval.
-                <br />
-                <button mat-button (click)="showConfirmation = false" color="primary">dismiss</button>
-              </mat-card>
-            </mat-card-content>
-          </mat-card>
-        </div>
-        <div *cdkVirtualFor="let confess of confessions; let i = index; trackBy: trackByIdx">
-          <app-confession *ngIf="confess.visible" [confession]="confess"  (clickReact)="react($event, confess)" (clickComment)="comment($event, confess)">
-            </app-confession>
-        </div>
-      <iframe style="margin: 0 auto; display: flex" *ngIf="theEnd" src="https://giphy.com/embed/lD76yTC5zxZPG" width="480"
-        height="352" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
-    
-      </cdk-virtual-scroll-viewport>
-    </ng-container>
-  </div>
+  <mat-card
+    *ngIf="event.password != '' && passModel.pass != event.password"
+    style="width: 80%; margin: 10px auto;"
+  >
+    <mat-card-header>
+      <mat-card-title>
+        <h2>{{ event.formal_name }} Security</h2>
+      </mat-card-title>
+    </mat-card-header>
+    <form [formGroup]="passForm">
+      <formly-form
+        [model]="passModel"
+        [fields]="passFields"
+        [options]="passOptions"
+        [form]="passForm"
+      >
+      </formly-form>
+    </form>
+  </mat-card>
+
+  <ng-container *ngIf="!event.password || passModel.pass === event.password">
+    <cdk-virtual-scroll-viewport
+      style="height: 100%"
+      *ngIf="confession_s | async as confessions"
+      itemSize="100"
+      (scrolledIndexChange)="
+        nextBatch($event, confessions[confessions.length - 1].dateCreated)
+      "
+    >
+      <div style="width: 92%; margin: 10px auto 20px auto;">
+        <h1>{{ event.formal_name }} Confessions App</h1>
+        <mat-card
+          style="margin: 10px 0px; "
+          class="mat-elevation-z5"
+          *ngIf="event.submitForm"
+        >
+          <mat-card-header>
+            <mat-card-title>
+              <h3>Write a confession</h3>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <form [formGroup]="form" (ngSubmit)="submit()">
+              <formly-form
+                [model]="model"
+                [fields]="event.submitForm"
+                [options]="options"
+                [form]="form"
+              >
+                <button
+                  mat-raised-button
+                  type="submit"
+                  [disabled]="!form.valid"
+                >
+                  Submit
+                </button>
+              </formly-form>
+            </form>
+            <mat-card *ngIf="showConfirmation">
+              Your confession has been submitted, awaiting admin approval.
+              <br />
+              <button
+                mat-button
+                (click)="showConfirmation = false"
+                color="primary"
+              >
+                dismiss
+              </button>
+            </mat-card>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div
+        *cdkVirtualFor="
+          let confess of confessions;
+          let i = index;
+          trackBy: trackByIdx
+        "
+      >
+        <app-confession
+          *ngIf="confess.visible"
+          [confession]="confess"
+          (clickReact)="react($event, confess)"
+          (clickComment)="comment($event, confess)"
+        >
+        </app-confession>
+      </div>
+      <iframe
+        style="margin: 0 auto; display: flex"
+        *ngIf="theEnd"
+        src="https://giphy.com/embed/lD76yTC5zxZPG"
+        width="480"
+        height="352"
+        frameBorder="0"
+        class="giphy-embed"
+        allowFullScreen
+      ></iframe>
+    </cdk-virtual-scroll-viewport>
+  </ng-container>
+</div>
