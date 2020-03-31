@@ -44,8 +44,8 @@ export class AdminComponent implements OnInit, AfterViewInit {
   /* Table items */
   displayedColumns = ["dateCreated", "to", "status", "manage"];
   dataSource: MatTableDataSource<any>;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild("paginator", { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild("paginator") paginator: MatPaginator;
   // matPaginator
 
   // private paginator: MatPaginator;

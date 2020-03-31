@@ -80,9 +80,9 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
   /* Confessions raw */
   confessions: any[] = null; // old system switch it out
 
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild("myPond", { static: false }) myPond: any;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild("myPond") myPond: any;
 
   lastUploadedPhoto = null;
 

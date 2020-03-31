@@ -16,7 +16,7 @@ import { FormlyFormOptions, FormlyFieldConfig } from "@ngx-formly/core";
   styles: []
 })
 export class InfiniteConfessionsComponent implements AfterViewInit {
-  @ViewChild(CdkVirtualScrollViewport, { static: false })
+  @ViewChild(CdkVirtualScrollViewport)
   viewport: CdkVirtualScrollViewport;
 
   batch = 20;
