@@ -3,6 +3,8 @@ import { FormGroup } from "@angular/forms";
 import { FormlyFormOptions, FormlyFieldConfig } from "@ngx-formly/core";
 import { DataService } from "../services/data.service";
 import Swal from "sweetalert2";
+import { AnalyticsService } from "../services/analytics.service";
+import { first } from "rxjs/operators";
 
 @Component({
   selector: "app-create-event",
@@ -13,11 +15,21 @@ import Swal from "sweetalert2";
         width: 95%;
         margin: 10px auto;
       }
-    `
-  ]
+    `,
+  ],
 })
 export class CreateEventComponent implements OnInit {
   @Input() formType: string = "public";
+  @Input() events: {
+    [k: string]: {
+      active: boolean;
+      dateCreated: Date;
+      id: string;
+      formal_name: string;
+      organization;
+      string;
+    };
+  } = null;
   loginForm = new FormGroup({});
   loginModel: any = {};
   loginOptions: FormlyFormOptions = {};
@@ -28,9 +40,9 @@ export class CreateEventComponent implements OnInit {
       templateOptions: {
         label: "Password",
         placeholder: "Entry Password",
-        required: true
-      }
-    }
+        required: true,
+      },
+    },
   ];
 
   form = new FormGroup({});
@@ -44,26 +56,27 @@ export class CreateEventComponent implements OnInit {
       templateOptions: {
         label: "Event Formal Name",
         placeholder: "Event Name",
-        required: true
-      }
+        required: true,
+      },
     },
     {
       key: "organization",
       type: "input",
       templateOptions: {
-        label: "Organization Mame",
-        placeholder: "Organization Mame",
-        required: true
-      }
+        label: "Organization Name",
+        placeholder: "Organization Name",
+        required: true,
+      },
     },
     {
       key: "id",
       type: "input",
       templateOptions: {
-        label: "URL Event ID",
-        placeholder: "URL Event ID",
-        required: true
-      }
+        label: "URL",
+        placeholder: "Requested URL",
+        description: "This is what's going to appear in the address bar",
+        required: true,
+      },
     },
     {
       key: "password",
@@ -71,8 +84,8 @@ export class CreateEventComponent implements OnInit {
       templateOptions: {
         label: "Attendee Password",
         placeholder: "Attendee Password",
-        required: true
-      }
+        required: true,
+      },
     },
     {
       key: "adminPassword",
@@ -80,20 +93,20 @@ export class CreateEventComponent implements OnInit {
       templateOptions: {
         label: "Admin Password",
         placeholder: "Admin Password",
-        required: true
-      }
+        required: true,
+      },
     },
     {
       key: "adminViewPassword",
       type: "input",
       templateOptions: {
         label: "Admin View Only Password",
-        placeholder: "Admin View Only Password"
-      }
-    }
+        placeholder: "Admin View Only Password",
+      },
+    },
   ];
 
-  constructor(private ds: DataService) {}
+  constructor(private ds: DataService, private ans: AnalyticsService) {}
 
   ngOnInit() {
     if (this.formType === "admin") {
@@ -105,8 +118,9 @@ export class CreateEventComponent implements OnInit {
         templateOptions: {
           required: true,
           label: "Contact Name",
-          placeholder: "Contact Name"
-        }
+          placeholder: "Contact Name",
+          description: "To contact you",
+        },
       });
       this.fields.push({
         key: "contactEmail",
@@ -114,14 +128,32 @@ export class CreateEventComponent implements OnInit {
         templateOptions: {
           required: true,
           label: "Contact Email",
-          placeholder: "Contact Email"
-        }
+          placeholder: "Contact Email",
+          description: "To contact you",
+        },
+      });
+      this.fields.push({
+        key: "emailNotifications",
+        type: "checkbox",
+        defaultValue: false,
+        templateOptions: {
+          required: true,
+          label: "Moderation Email Notifications?",
+          description:
+            "Do you want to get email notifications on confessions moderation?",
+        },
       });
     }
   }
 
   // TODO ensure document doesn't already exist first
-  create() {
+  async create() {
+    if (!this.events) {
+      this.events = this.ds.arrayToMap(
+        await this.ds.getAllEvents(null).pipe(first()).toPromise()
+      );
+    }
+
     Swal.fire({
       title: "Event Creation",
       text: "Create/edit event?",
@@ -129,14 +161,16 @@ export class CreateEventComponent implements OnInit {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Create/edit event!"
-    }).then(result => {
+      confirmButtonText: "Create/edit event!",
+    }).then((result) => {
       if (result.value) {
-        this.ds.createEvent(this.model["id"], this.model).then(val => {
+        this.ds.createEvent(this.model["id"], this.model).then((val) => {
+          this.ans.logEvent("create_event");
+          // TODO send an email about update
           Swal.fire({
-            title: "Event modified",
+            title: "Event created",
             text: `${val}`,
-            icon: "success"
+            icon: "success",
           });
         });
       }

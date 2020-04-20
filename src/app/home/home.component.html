@@ -1,8 +1,4 @@
-<div
-  class="container"
-  style="padding: 10px 0px;"
-  *ngIf="homeData$ | async as data"
->
+<div class="container" style="padding: 10px 0px;" *ngIf="homeData as data">
   <mat-card *ngIf="data.homeIntro">
     <mat-card-header>
       <mat-card-title>
@@ -25,7 +21,7 @@
     <mat-card-content>
       <mat-list class="checked-list">
         <mat-list-item
-          *ngFor="let event of events$ | async"
+          *ngFor="let event of eventsArray"
           class="border-2px-gray"
         >
           <mat-icon
@@ -50,5 +46,8 @@
     </mat-card-header>
     <mat-card-content [innerHTML]="data.contact.html"></mat-card-content>
   </mat-card>
-  <app-create-event *ngIf="data.allowCreate"></app-create-event>
+  <app-create-event
+    [events]="events"
+    *ngIf="data.allowCreate"
+  ></app-create-event>
 </div>

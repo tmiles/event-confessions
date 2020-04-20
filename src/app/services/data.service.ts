@@ -9,21 +9,24 @@ import {
   throttleTime,
   take,
   first,
-  finalize
+  finalize,
 } from "rxjs/operators";
 import { Confession, Comment } from "../types/types";
 import { AngularFireStorage } from "@angular/fire/storage";
+import { Router } from "@angular/router";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class DataService {
+  public versionNumber = "6.6.0";
   public recent: Observable<Confession[]> = null;
   public all: Observable<Confession[]> = null;
 
   constructor(
     private db: AngularFirestore,
-    private afstore: AngularFireStorage
+    private afstore: AngularFireStorage,
+    private router: Router
   ) {
     // this.summarizeData("sww20").then();
     // this.duplicateDoc('events/sw-apex-4', 'events/u-16');
@@ -42,7 +45,7 @@ export class DataService {
   searchFields(input: any, fields: any[], text: string): boolean {
     let check = false;
     // goes through the array of fields
-    fields.forEach(val => {
+    fields.forEach((val) => {
       let value = input;
       if (val.length > 1) {
         // if it's a nested array
@@ -67,9 +70,7 @@ export class DataService {
   async createEvent(eventID: string, data: any) {
     // check if data
 
-    let check = await this.getEvent(eventID)
-      .pipe(first())
-      .toPromise();
+    let check = await this.getEvent(eventID).pipe(first()).toPromise();
     if (check) {
       return this.db
         .doc(`events/${eventID}`)
@@ -89,18 +90,18 @@ export class DataService {
             templateOptions: {
               lable: "To",
               placeholder: "Who is this to?",
-              required: true
+              required: true,
             },
-            type: "input"
+            type: "input",
           },
           {
             hideExpression: "!model.to",
             key: "from",
             templateOptions: {
               label: "From",
-              placeholder: "Who is writing this (optional)?"
+              placeholder: "Who is writing this (optional)?",
             },
-            type: "input"
+            type: "input",
           },
           {
             hideExpression: "!model.to",
@@ -108,11 +109,11 @@ export class DataService {
             templateOptions: {
               label: "Message",
               placeholder: "What do you want to say to them?",
-              required: true
+              required: true,
             },
-            type: "input"
-          }
-        ]
+            type: "input",
+          },
+        ],
       };
       return this.db
         .doc(`events/${eventID}`)
@@ -137,7 +138,7 @@ export class DataService {
     data.eventID = eventName;
     if (file) {
       // upload here then do other stuff
-      await this.uploadFile(eventName, file, id).then(val => {
+      await this.uploadFile(eventName, file, id).then((val) => {
         data.fileURL = val;
         const newData = JSON.parse(JSON.stringify(data));
         return this.db
@@ -273,13 +274,13 @@ export class DataService {
   limit(collection: string, order: any, amount: number, visible?: boolean) {
     if (visible === undefined) {
       return this.db
-        .collection<Confession>(collection, ref =>
+        .collection<Confession>(collection, (ref) =>
           ref.orderBy("dateCreated", order).limit(amount)
         )
         .valueChanges();
     }
     return this.db
-      .collection<Confession>(collection, ref =>
+      .collection<Confession>(collection, (ref) =>
         ref
           .where("visible", "==", visible)
           .orderBy("dateCreated", order)
@@ -290,10 +291,7 @@ export class DataService {
 
   /* Access functions */
   getConfig(eventName: string): Observable<any> {
-    return this.db
-      .collection("events")
-      .doc(eventName)
-      .valueChanges();
+    return this.db.collection("events").doc(eventName).valueChanges();
   }
 
   getConfessions(eventName: string, approved: boolean): Observable<any> {
@@ -303,7 +301,7 @@ export class DataService {
         .valueChanges();
     } else {
       return this.db
-        .collection(`events/${eventName}/confessions`, ref => {
+        .collection(`events/${eventName}/confessions`, (ref) => {
           return ref
             .where("visible", "==", approved)
             .orderBy("dateCreated", "desc");
@@ -319,13 +317,13 @@ export class DataService {
   ): Observable<any> {
     if (approved == null) {
       return this.db
-        .collection(`events/${eventName}/confessions`, ref =>
+        .collection(`events/${eventName}/confessions`, (ref) =>
           ref.orderBy(orderBy, "desc")
         )
         .valueChanges();
     } else {
       return this.db
-        .collection(`events/${eventName}/confessions`, ref => {
+        .collection(`events/${eventName}/confessions`, (ref) => {
           return ref.where("visible", "==", approved).orderBy("status", "desc");
         })
         .valueChanges();
@@ -333,24 +331,19 @@ export class DataService {
   }
 
   getHomeData(): Observable<any> {
-    return this.db
-      .collection("configs")
-      .doc("home")
-      .valueChanges();
+    return this.db.collection("configs").doc("home").valueChanges();
+  }
+
+  updateHomeData(data: { [k: string]: any }): Promise<void> {
+    return this.db.doc(`configs/home`).update(data);
   }
 
   getEvent(eventName: string): Observable<any> {
-    return this.db
-      .collection("events")
-      .doc(eventName)
-      .valueChanges();
+    return this.db.collection("events").doc(eventName).valueChanges();
   }
 
   getEventStats(eventID: string): Observable<any> {
-    return this.db
-      .collection("summaries")
-      .doc(eventID)
-      .valueChanges();
+    return this.db.collection("summaries").doc(eventID).valueChanges();
   }
 
   getAllEvents(active: boolean): Observable<any[]> {
@@ -359,11 +352,31 @@ export class DataService {
     }
 
     return this.db
-      .collection(`events`, ref =>
+      .collection(`events`, (ref) =>
         ref.where("active", "==", active).orderBy("dateCreated", "desc")
       )
       .valueChanges();
   }
+
+  arrayToMap(data: any[]): { [k: string]: any } {
+    let res = {};
+    data.forEach((el) => {
+      if (!el.id) {
+        el.id = this.db.createId();
+      }
+      res[el.id] = el;
+    });
+    return res;
+  }
+
+  toArray(data: { [k: string]: any }) {
+    let res = [];
+    Object.keys(data).forEach((el) => {
+      res.push(data[el]);
+    });
+    return res;
+  }
+
   /**
    * @todo move to. cloud function or /api end point (proof of concept here)
    */
@@ -381,7 +394,7 @@ export class DataService {
           sad: 0,
           smile: 0,
           thumbs: 0,
-          scored: 0
+          scored: 0,
         },
         averages: {
           confessions: 0,
@@ -392,32 +405,30 @@ export class DataService {
           smile: 0,
           thumbs: 0,
           acceptRate: 0,
-          commentRate: 0
-        }
+          commentRate: 0,
+        },
       },
-      id: "all"
+      id: "all",
     };
     let events = await this.db
-      .collection("events", ref => ref.where("active", "==", true))
+      .collection("events", (ref) => ref.where("active", "==", true))
       .get()
       .pipe(first())
       .toPromise();
     for await (let ev of events.docs) {
-      let estats = await this.getEventStats(ev.id)
-        .pipe(first())
-        .toPromise();
+      let estats = await this.getEventStats(ev.id).pipe(first()).toPromise();
       if (!estats) {
         // run stats here
         estats = await this.summarizeData(ev.id);
       }
       data.events[ev.id] = {
-        stats: estats
+        stats: estats,
       };
     }
     data.stats.events = Object.keys(data.events).length;
 
     // Iterate through all the events
-    Object.keys(data.events).forEach(eid => {
+    Object.keys(data.events).forEach((eid) => {
       let edata = data.events[eid].stats;
       data.stats.confessions.total += edata.confessions.total;
       data.stats.confessions.accepted += edata.confessions.accepted;
@@ -474,7 +485,7 @@ export class DataService {
           sad: 0,
           smile: 0,
           thumbs: 0,
-          scored: 0
+          scored: 0,
         },
         averages: {
           comments: 0,
@@ -484,19 +495,19 @@ export class DataService {
           smile: 0,
           thumbs: 0,
           acceptRate: 0,
-          commentRate: 0
-        }
+          commentRate: 0,
+        },
       },
-      id: "all"
+      id: "all",
     };
     let events = await this.db
-      .collection("events", ref => ref.where("active", "==", true))
+      .collection("events", (ref) => ref.where("active", "==", true))
       .get()
       .pipe(first())
       .toPromise();
     events.forEach(
-      ev =>
-        async function() {
+      (ev) =>
+        async function () {
           let estats = await this.getEventStats(ev.id)
             .pipe(first())
             .toPromise();
@@ -505,12 +516,12 @@ export class DataService {
             estats = await this.summarizeData(ev.id);
           }
           events[ev.id] = {
-            stats: estats
+            stats: estats,
           };
         }
     );
     // Iterate through all the events
-    Object.keys(data.events).forEach(eid => {
+    Object.keys(data.events).forEach((eid) => {
       let edata = data.events[eid];
       data.stats.confessions.total += edata.confessions.total;
       data.stats.confessions.accepted += edata.confessions.accepted;
@@ -584,21 +595,18 @@ export class DataService {
       .then(() => console.log("Updated"));
   }
 
-  async loadEvent(path: string) {
-    const doc = await this.checkEvent(path);
+  // async loadEvent(path: string) {
+  //   const doc = await this.checkEvent(path);
 
-    if (doc) {
-      // Additional items
-      return this.db
-        .collection("events")
-        .doc(path)
-        .valueChanges();
-    } else {
-      console.log("Unable to find");
-      // TODO redirect to home page
-      return null;
-    }
-  }
+  //   if (doc) {
+  //     // Additional items
+  //     return this.db.collection("events").doc(path).valueChanges();
+  //   } else {
+  //     console.log("Unable to find");
+  //     this.router.navigateByUrl("/home");
+  //     return null;
+  //   }
+  // }
 
   getBatch(offset, eventName: string, batch: number): any {
     let end = false;
@@ -607,23 +615,20 @@ export class DataService {
       result: this.db
         .collection("events")
         .doc(eventName)
-        .collection("confessions", ref =>
-          ref
-            .orderBy("id")
-            .startAfter(offset)
-            .limit(batch)
+        .collection("confessions", (ref) =>
+          ref.orderBy("id").startAfter(offset).limit(batch)
         )
         .snapshotChanges()
         .pipe(
-          tap(arr => (arr.length ? null : (end = true))),
-          map(arr => {
+          tap((arr) => (arr.length ? null : (end = true))),
+          map((arr) => {
             return arr.reduce((acc, cur) => {
               const id = cur.payload.doc.id;
               const data = cur.payload.doc.data();
               return { ...acc, [id]: data };
             }, {});
           })
-        )
+        ),
     };
   }
   /* Dev */
@@ -631,7 +636,7 @@ export class DataService {
     this.db
       .doc(original)
       .valueChanges()
-      .subscribe(res => {
+      .subscribe((res) => {
         console.log(res);
         return this.db.doc(newAddress).set(Object.assign({}, res));
       });
@@ -642,8 +647,8 @@ export class DataService {
     this.db
       .collection(original)
       .valueChanges()
-      .subscribe(res => {
-        res.forEach(res1 => {
+      .subscribe((res) => {
+        res.forEach((res1) => {
           if (counter < 5) {
             this.db
               .doc(`${newAddress}/${res1["id"]}`)
@@ -662,8 +667,8 @@ export class DataService {
     this.db
       .collection(original)
       .valueChanges()
-      .subscribe(res => {
-        res.forEach(res1 => {
+      .subscribe((res) => {
+        res.forEach((res1) => {
           res1["commentPending"] = res1["commentPending"]
             ? res1["commentPending"]
             : 0;
@@ -677,7 +682,7 @@ export class DataService {
                 {},
                 {
                   commentPending: res1["commentPending"],
-                  commentCount: res1["commentCount"]
+                  commentCount: res1["commentCount"],
                 }
               )
             )
@@ -698,7 +703,7 @@ export class DataService {
       // console.log(filePath);
       const fileRef = this.afstore.ref(filePath);
       const task = this.afstore.upload(filePath, file, {
-        customMetadata: { eventID: eventID, id: id }
+        customMetadata: { eventID: eventID, id: id },
       });
 
       // let percentage = task.percentageChanges();
@@ -727,7 +732,7 @@ export class DataService {
         id: newID,
         confession: id,
         eventID: eventID,
-        timestamp: new Date()
+        timestamp: new Date(),
       })
       .then(() => {
         return this.db
@@ -756,11 +761,11 @@ export class DataService {
         smile: 0,
         thumbs: 0,
         acceptRate: 0,
-        commentRate: 0
-      }
+        commentRate: 0,
+      },
     };
 
-    confessions.forEach(val => {
+    confessions.forEach((val) => {
       let v = val.data();
       data.confessions.accepted += v.visible ? 1 : 0;
       data.confessions.rejected +=

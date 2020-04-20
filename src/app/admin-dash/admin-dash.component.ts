@@ -3,31 +3,45 @@ import { FormGroup } from "@angular/forms";
 import { Observable } from "rxjs";
 import { first } from "rxjs/operators";
 import { DataService } from "../services/data.service";
-import { ChartType, ChartOptions } from "chart.js";
+import { ChartOptions } from "chart.js";
 import { FormlyFormOptions, FormlyFieldConfig } from "@ngx-formly/core";
 import { Label } from "ng2-charts";
+import { AnalyticsService } from "../services/analytics.service";
+import {
+  faHome,
+  faPlusCircle,
+  faFileDownload,
+  faEnvelopeOpenText,
+  faComments,
+  faCogs,
+} from "@fortawesome/free-solid-svg-icons";
+import { faClock, faChartBar } from "@fortawesome/free-regular-svg-icons";
 
 @Component({
   selector: "app-admin-dash",
   templateUrl: "./admin-dash.component.html",
-  styles: [
-    `
-      .grayBg {
-        background-color: #f1f1f1;
-        border-radius: 10px;
-        margin: 10px;
-      }
-    `
-  ]
+  styleUrls: ["./admin-dash.component.css"],
 })
 export class AdminDashComponent implements OnInit {
+  icons = {
+    home: faHome,
+    pending: faClock,
+    create: faPlusCircle,
+    reports: faChartBar,
+    export: faFileDownload,
+    email: faEnvelopeOpenText,
+    events: faComments,
+    settings: faCogs,
+  };
   events$: Observable<any[]> = null;
   eventStats: any = {};
   event: any = null;
   currentStats: any = null;
   eventID: string = null;
+  homeData: any = null;
   allStats$: Observable<any> = null;
   createEvent: boolean = false;
+  currentDash: string = "home";
 
   // Security
 
@@ -42,9 +56,9 @@ export class AdminDashComponent implements OnInit {
       templateOptions: {
         label: "Password",
         placeholder: "Entry Password",
-        required: true
-      }
-    }
+        required: true,
+      },
+    },
   ];
   public adminPassword: string = "superAdminPassword";
 
@@ -52,8 +66,8 @@ export class AdminDashComponent implements OnInit {
   public pieChartOptions: ChartOptions = {
     responsive: true,
     legend: {
-      position: "top"
-    }
+      position: "top",
+    },
   };
   public pieChartLabels: Label[] = ["Hearts", "Smiles", "Sad", "Thumbs"];
   public pieChartData: number[] = [0, 0, 0, 0];
@@ -62,13 +76,17 @@ export class AdminDashComponent implements OnInit {
       backgroundColor: [
         "rgba(255,0,0,0.3)",
         "rgba(0,255,0,0.3)",
-        "rgba(0,0,255,0.3)"
-      ]
-    }
+        "rgba(0,0,255,0.3)",
+      ],
+    },
   ];
-  constructor(public d_s: DataService) {}
+  constructor(public d_s: DataService, private ans: AnalyticsService) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.homeData = await this.d_s.getHomeData().pipe(first()).toPromise();
+    this.adminPassword = this.homeData
+      ? this.homeData.adminPassword
+      : this.adminPassword;
     this.events$ = this.d_s.getAllEvents(null);
     this.allStats$ = this.d_s.getEventStats("all");
     if (this.d_s.checkLocalPass("admin-dash")) {
@@ -105,23 +123,28 @@ export class AdminDashComponent implements OnInit {
 
   async calculateScore(eventID: string): Promise<boolean> {
     // Check if document exists
-    let stats = await this.d_s
-      .getEventStats(eventID)
-      .pipe(first())
-      .toPromise();
+    let stats = await this.d_s.getEventStats(eventID).pipe(first()).toPromise();
+    this.ans.logEvent("request_analytics");
     if (stats) {
       stats.lastUpdate = stats.lastUpdate.toDate();
       this.eventStats[eventID] = stats;
     } else {
       this.eventStats[eventID] = await this.d_s.summarizeData(eventID);
+      this.ans.logEvent("ran_analytics", {
+        eventID: this.eventID,
+      });
     }
     // Calculate if not
     this.currentStats = this.eventStats[eventID];
+
     return this.updateCharts(eventID);
   }
 
   async forceUpdate(eventID: string): Promise<boolean> {
     this.eventStats[eventID] = await this.d_s.summarizeData(eventID);
+    this.ans.logEvent("ran_analytics", {
+      eventID: this.eventID,
+    });
     this.currentStats = this.eventStats[eventID];
     return true;
   }
@@ -132,9 +155,18 @@ export class AdminDashComponent implements OnInit {
       this.currentStats.reactions.heart,
       this.currentStats.reactions.smile,
       this.currentStats.reactions.sad,
-      this.currentStats.reactions.thumbs
+      this.currentStats.reactions.thumbs,
     ];
+
     // bar
     return true;
   }
+
+  navigateDash(dashName: string) {
+    this.currentDash = dashName;
+    // TODO render out new content (might just be in the template tbh)
+  }
+
+  // TODO new function to moderate brand new events, include a timestamp for when moderated
+  // TODO if moderating new, then send a welcome email
 }

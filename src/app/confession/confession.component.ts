@@ -2,11 +2,12 @@ import { Component, Input, EventEmitter, Output } from "@angular/core";
 import { Confession, Comment } from "../types/types";
 import { DataService } from "../services/data.service";
 import Swal from "sweetalert2";
+import { AnalyticsService } from "../services/analytics.service";
 
 @Component({
   selector: "app-confession",
   templateUrl: "./confession.component.html",
-  styles: ["i.em { font-size: 12px; }"]
+  styles: ["i.em { font-size: 12px; }"],
 })
 export class ConfessionComponent {
   @Input("confession") confession;
@@ -21,10 +22,10 @@ export class ConfessionComponent {
     { data: "heart", icon: "em em-heart_eyes" },
     { data: "smile", icon: "em em-laughing" },
     { data: "sad", icon: "em em-cry" },
-    { data: "thumbs", icon: "em em---1" }
+    { data: "thumbs", icon: "em em---1" },
   ];
 
-  constructor(private ds: DataService) {}
+  constructor(private ds: DataService, private ans: AnalyticsService) {}
 
   react(type: string) {
     this.clickReact.emit(type);
@@ -36,7 +37,7 @@ export class ConfessionComponent {
       dateApproved: null,
       dateCreated: new Date(),
       visible: false,
-      id: 0 // where in array it is,
+      id: 0, // where in array it is,
     };
     this.sentComment = true;
     this.commentMessage = "";
@@ -51,14 +52,18 @@ export class ConfessionComponent {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Report Confession!"
-    }).then(result => {
+      confirmButtonText: "Report Confession!",
+    }).then((result) => {
       if (result.value) {
-        this.ds.reportConfession(confession.eventID, confession).then(val => {
+        this.ds.reportConfession(confession.eventID, confession).then((val) => {
+          this.ans.logEvent("report", {
+            eventID: confession.eventID,
+            confessionID: confession.id,
+          });
           Swal.fire({
             title: "Feedback provided",
             text: "Thank you for providing your feedback!",
-            icon: "success"
+            icon: "success",
           });
         });
       }

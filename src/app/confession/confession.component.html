@@ -1,11 +1,17 @@
-<mat-card *ngIf="confession" style="padding: 15px" class="mat-elevation-z3">
+<mat-card *ngIf="confession" style="padding: 15px;" class="mat-elevation-z3">
   <mat-card-header style="margin: 0px;">
     <mat-card-title
-      style="margin: 0px; width: 100%;display: flex; justify-content: space-between"
+      style="
+        margin: 0px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+      "
     >
       <strong style="font-size: 12pt;">{{ confession.to }}</strong>
 
       <mat-menu #menu="matMenu">
+        <!-- TODO share button -->
         <!-- <button style="font-size: 11px;" mat-menu-item disabled="true">
           <mat-icon>share</mat-icon>
           <!-- <span>Share</span>
@@ -16,6 +22,8 @@
             [checked]="checked">
         </mat-slide-toggle> 
         </button> -->
+
+        <!-- TODO create component to see the confession on it's own (perhaps in the center, no password required) -->
         <button
           style="font-size: 11px;"
           mat-menu-item
@@ -25,6 +33,7 @@
           <span>Report</span>
         </button>
       </mat-menu>
+      <!-- TODO Ability to pin/star -->
     </mat-card-title>
     <mat-card-subtitle>
       <span style="font-size: 12px;"
@@ -44,11 +53,11 @@
       <mat-icon>more_vert</mat-icon>
     </button>
   </mat-card-header>
-  <mat-card-content style="padding: 0px 10px 5px 0px">
+  <mat-card-content style="padding: 0px 10px 5px 0px;">
     <p style="font-size: 12px;">{{ confession.message }}</p>
-    <div *ngIf="confession.fileURL" style="margin-right: 20px">
+    <div *ngIf="confession.fileURL" style="margin-right: 20px;">
       <img
-        style="max-width: 100%"
+        style="max-width: 100%;"
         *ngIf="showImage"
         [src]="confession.fileURL"
         (click)="showImage = !showImage"
@@ -71,7 +80,7 @@
         style="font-size: 13px;"
         (click)="showReactions = !showReactions"
       >
-        <mat-icon style="color: #0336FF; font-size: 14px;">tag_faces</mat-icon>
+        <mat-icon style="color: #0336ff; font-size: 14px;">tag_faces</mat-icon>
         {{ confession.score > 0 ? confession.score : "" }}
       </button>
       <button
@@ -79,12 +88,17 @@
         style="font-size: 13px;"
         (click)="showComments = !showComments"
       >
-        <mat-icon style="color: #0336FF; font-size: 14px;">message</mat-icon
+        <mat-icon style="color: #0336ff; font-size: 14px;">message</mat-icon
         >{{ confession.commentCount > 0 ? " " + confession.commentCount : "" }}
       </button>
       <!-- <button mat-icon-button style="font-size: 13px;" disabled="true"><mat-icon style="font-size: 14px;">reply</mat-icon></button> -->
       <span
-        style="font-size: 8pt; display: inline-block; padding-top: 12px; margin-left: auto;"
+        style="
+          font-size: 8pt;
+          display: inline-block;
+          padding-top: 12px;
+          margin-left: auto;
+        "
       >
         {{ confession.dateCreated | date: "short" }}
       </span>
@@ -93,14 +107,20 @@
       <mat-button-toggle-group class="mat-elevation-z0">
         <mat-button-toggle
           class="mat-elevation-z0"
-          style="width: 100%; min-height: 60px; padding-top: 5px; width: 25%; margin: 0px auto;"
+          style="
+            width: 100%;
+            min-height: 60px;
+            padding-top: 5px;
+            width: 25%;
+            margin: 0px auto;
+          "
           *ngFor="let val of reactionTypes"
           [value]="val.data"
           (click)="react(val.data)"
         >
           <i [class]="val.icon"></i>
           <span
-            style="position: relative; left: 5px; bottom: 15px; font-size: 9px"
+            style="position: relative; left: 5px; bottom: 15px; font-size: 9px;"
             >{{ confession.reaction[val.data] }}</span
           >
         </mat-button-toggle>
@@ -145,7 +165,7 @@
     </div> -->
     <div *ngIf="showComments" style="padding: 0px 10px;">
       <hr />
-      <mat-form-field style="width: 90%; margin: 10px auto; font-size: 14px">
+      <mat-form-field style="width: 90%; margin: 10px auto; font-size: 14px;">
         <textarea
           matInput
           rows="4"
@@ -169,10 +189,15 @@
         <div *ngFor="let c of confession.comments">
           <div
             *ngIf="c.visible"
-            style="padding: 10px; border-radius: 5px; margin-bottom: 4px; background-color: rgb(236, 238, 239)"
+            style="
+              padding: 10px;
+              border-radius: 5px;
+              margin-bottom: 4px;
+              background-color: rgb(236, 238, 239);
+            "
           >
             <p style="font-size: 12px;">{{ c.message }}</p>
-            <p class="text-right" style="color: #999; font-size: 8px; ">
+            <p class="text-right" style="color: #999; font-size: 8px;">
               {{ c.dateCreated.toDate() | date: "short" }}
             </p>
           </div>

@@ -3,15 +3,199 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 mat-card {
-	margin-top: 5px;
+  margin-top: 5px;
+}
+
+:root {
+  font-size: 16px;
+  --color-gray: #e6ecf0;
+  --color-blue: #1da1f2;
+  --color-light-blue: #1da1f21c;
+  --border-gray: #e6ecf0;
+  --bg-secondary: #e6ecf0;
 }
 
 .row {
-	margin: 10px 0px;
+  margin: 10px 0px;
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: 'Roboto', sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+}
 
 .mat-card-header-text {
   margin: 0px !important;
+}
+
+.hover-pointer:hover {
+  cursor: pointer;
+}
+
+.mat-icon:hover {
+  cursor: pointer;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.searchBar {
+  border-radius: 100px;
+  padding: 0px 1rem;
+  background-color: var(--color-gray);
+}
+
+/** Dashboard **/
+nav.nav {
+  padding-right: 0.5rem;
+  width: 8rem;
+  z-index: 10;
+}
+
+nav ul {
+  list-style-type: none;
+  padding-left: 0px;
+}
+
+nav ul li {
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  margin: 1rem 0px;
+  padding: 8px;
+}
+
+nav ul li fa-icon.ng-fa-icon {
+  font-size: 1.5rem;
+}
+
+/** Nav Hover Effects **/
+nav ul li:hover {
+  cursor: pointer;
+  border: 1px solid var(--color-light-blue);
+  border-radius: 10px;
+  background-color: var(--color-light-blue);
+}
+
+nav ul li:hover span.nav-text {
+  font-weight: bold;
+  color: var(--color-blue);
+}
+
+nav ul li:hover .ng-fa-icon path {
+  fill: var(--color-blue);
+}
+
+nav ul li span.nav-text {
+  margin: 1rem;
+}
+
+nav ul li.active span.nav-text {
+  color: var(--color-blue);
+}
+
+nav ul li.active svg path {
+  fill: var(--color-blue);
+}
+
+@media screen and (max-width: 768px) {
+  nav.nav {
+    width: 3rem;
+  }
+
+  nav.nav ul span.nav-text {
+    display: none;
+  }
+
+  nav.nav ul li:hover {
+    width: 8rem;
+  }
+
+  nav.nav ul li:hover span.nav-text {
+    display: inline-block;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  nav.nav {
+    height: 4rem;
+    width: 100vw;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    align-items: center;
+    border-top: 1px solid var(--border-gray);
+  }
+
+  nav.nav ul {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+  }
+}
+
+/* Flex layouts */
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.flex-center {
+  justify-content: center;
+}
+
+/* Sidebar */
+aside.sidebar {
+  width: 12rem;
+  padding: 0px 0.5rem;
+}
+
+div.dashboardPage div.mainContainer {
+  width: calc(100% - 8rem - 12rem);
+  padding: 0px 0.5rem;
+}
+
+@media screen and (max-width: 768px) {
+  aside.sidebar {
+    display: none;
+  }
+  div.dashboardPage div.mainContainer {
+    width: calc(100% - 3rem);
+  }
+}
+
+/* Responsive */
+.showSmall {
+  display: none;
+}
+
+.showBig {
+  display: inherit;
+}
+
+@media screen and (max-width: 600px) {
+  .showSmall {
+    display: inherit;
+  }
+
+  .showBig {
+    display: none;
+  }
 }

@@ -1,6 +1,6 @@
 <div
   *ngIf="event"
-  style="width: 90%; margin: 0px auto; padding-top: 20px; height: 100vh"
+  style="width: 90%; margin: 0px auto; padding-top: 20px; height: 100vh;"
 >
   <mat-card *ngIf="authenticated === ''">
     <!-- <mat-card *ngIf="event.adminPassword != '' && model.pass != event.adminPassword"> -->
@@ -29,12 +29,19 @@
   </mat-card>
   <!-- <div *ngIf="!event.adminPassword || model.pass === event.adminPassword"> -->
   <div *ngIf="authenticated != ''">
-    <mat-card style="margin-bottom: 50px">
+    <mat-card style="margin-bottom: 50px;">
       <mat-card-header>
         <mat-card-title>
           <h2>{{ event.formal_name }} - Confessions Management</h2>
         </mat-card-title>
       </mat-card-header>
+      <!-- TODO New subcomponent for the chart of statistics -->
+      <!-- TODO Analytics on items pending moderation (perhaps a pop up) -->
+      <!-- TODO ability to update and run more analytics -->
+      <!-- TODO ability to update information (passwords, such) -->
+      <!-- TODO help instructions -->
+      <!-- TODO walkthrough on first initial password setup -->
+      <!-- TODO add ability to add additional emails for moderation -> display them, allow delete, add (use the chips) -->
       <mat-card-content>
         <mat-form-field>
           <input
@@ -44,7 +51,7 @@
           />
         </mat-form-field>
         <table
-          style="width: 100%"
+          style="width: 100%;"
           mat-table
           matSortActive="status"
           matSortDirection="desc"

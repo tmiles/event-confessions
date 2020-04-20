@@ -1,0 +1,31 @@
+.grayBg {
+  background-color: #f1f1f1;
+}
+
+div.mainContainer {
+  border-left: 1px solid var(--border-gray);
+  border-right: 1px solid var(--border-gray);
+}
+
+@media screen and (max-width: 600px) {
+  div.mainContainer {
+    border: none;
+    width: 100%;
+  }
+}
+
+button.createButton {
+  display: flex;
+  justify-content: space-around;
+}
+
+@media screen and (min-width: 768px) {
+  button.createButton .ng-fa-icon {
+    display: none;
+  }
+}
+@media screen and (max-width: 768px) {
+  button.createButton span.nav-text {
+    display: none;
+  }
+}

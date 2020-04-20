@@ -1,10 +1,10 @@
 <div
   *ngIf="event"
-  style="width: 90%; margin: 10px auto; padding-top: 20px; height: 100vh"
+  style="width: 90%; margin: 10px auto; padding-top: 20px; height: 100vh;"
 >
   <mat-card *ngIf="event.password != '' && !loggedIn">
     <mat-card-header>
-      <mat-card-title style="text-align: center">
+      <mat-card-title style="text-align: center;">
         <h2 style="margin-top: 10px;">{{ event.formal_name }} Confessions</h2>
       </mat-card-title>
     </mat-card-header>
@@ -26,15 +26,16 @@
     </form>
   </mat-card>
   <div *ngIf="event.password && loggedIn">
+    <!-- TODO walkthrough on first initial password setup -->
     <div class="example-container">
-      <mat-card style="margin-bottom: 10px">
+      <mat-card style="margin-bottom: 10px;">
         <mat-card-header>
           <mat-card-title>
             <h2>{{ event.formal_name }} Confessions</h2>
           </mat-card-title>
         </mat-card-header>
         <mat-card-content *ngIf="event.submitForm">
-          <h3 style="font-weight: 300">Write a confession</h3>
+          <h3 style="font-weight: 300;">Write a confession</h3>
           <form [formGroup]="form" (ngSubmit)="submit()">
             <formly-form
               [model]="model"
@@ -76,10 +77,11 @@
           </mat-card> -->
         </mat-card-content>
       </mat-card>
+      <!-- TODO Display your pinned posts -->
       <ng-container *ngIf="confessions && confessions.length > 0; else noItems">
         <div
           class="input-group input-group-md"
-          style="margin-top: 10px; width: 100%"
+          style="margin-top: 10px; width: 100%;"
         >
           <input
             type="text"
@@ -131,7 +133,7 @@
       </ng-container>
       <ng-template #noItems>
         <div>
-          <strong style="font-size: 14px">No confessions</strong>
+          <strong style="font-size: 14px;">No confessions</strong>
         </div>
       </ng-template>
       <!--

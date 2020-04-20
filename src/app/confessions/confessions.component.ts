@@ -14,11 +14,12 @@ import {
   state,
   style,
   transition,
-  trigger
+  trigger,
 } from "@angular/animations";
 import { Confession } from "../types/types";
 import Swal from "sweetalert2";
 import { first } from "rxjs/operators";
+import { AnalyticsService } from "../services/analytics.service";
 
 @Component({
   selector: "app-confessions",
@@ -34,9 +35,9 @@ import { first } from "rxjs/operators";
       transition(
         "expanded <=> collapsed",
         animate("400ms cubic-bezier(0.4, 0.0, 0.2, 1)")
-      )
-    ])
-  ]
+      ),
+    ]),
+  ],
 })
 export class ConfessionsComponent implements OnInit, AfterViewInit {
   // isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
@@ -61,9 +62,9 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
       templateOptions: {
         label: "Password",
         placeholder: "Entry Password",
-        required: true
-      }
-    }
+        required: true,
+      },
+    },
   ];
 
   eventID: string = null;
@@ -93,7 +94,7 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
     // allowImageValidateSize: true,
     // imageValidateSizeMaxWidth: 10000,
     // imageValidateSizeMaxHeight: 10000,
-    acceptedFileTypes: "image/jpeg, image/png, image/gif"
+    acceptedFileTypes: "image/jpeg, image/png, image/gif",
   };
 
   // pondFiles = [
@@ -105,25 +106,23 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private router: Router,
     public dialog: MatDialog,
-    private analytics: AngularFireAnalytics
+    private ans: AnalyticsService
   ) {
-    analytics.logEvent("loaded", { loaded: true });
+    this.ans.logEvent("loaded", { loaded: true });
   }
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       // todo load the correct event
       this.eventID = params["id"];
-      this.analytics.updateConfig({ DEBUG_MODE: true });
-      this.analytics.logEvent("event_open", { eid: this.eventID });
-      this.analytics.logEvent("custom_event", { eid: this.eventID });
-      console.log("Fired analytics");
-
+      // this.analytics.updateConfig({ DEBUG_MODE: true });
+      this.ans.logEvent("event_open", { eid: this.eventID });
+      this.ans.logEvent("custom_event", { eid: this.eventID });
       this.d_s
         .getEvent(this.eventID)
         .pipe(first())
         .toPromise()
-        .then(res => {
+        .then((res) => {
           if (!res) {
             Swal.fire({
               icon: "error",
@@ -132,7 +131,7 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
               timer: 1500,
               showConfirmButton: false,
               showCancelButton: false,
-              showCloseButton: false
+              showCloseButton: false,
             }).then(() => {
               this.router.navigate(["../"], { relativeTo: this.route });
             });
@@ -152,6 +151,7 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
     if (this.loginModel.pass === this.event.password) {
       this.loggedIn = true;
       return this.d_s.assignLocalPass(this.eventID);
+      // TODO walkthrough on first initial password setup
     }
     return false;
   }
@@ -184,17 +184,28 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
   }
 
   fetchData() {
-    this.d_s.getConfessions(this.eventID, true).subscribe(res => {
+    this.d_s.getConfessions(this.eventID, true).subscribe((res) => {
       this.confessions = res;
     });
   }
 
   react(event, confession) {
-    this.d_s.updateVotes(this.eventID, confession, event);
+    this.d_s.updateVotes(this.eventID, confession, event).then(() => {
+      this.ans.logEvent("react", {
+        eventID: this.eventID,
+        type: event,
+        confessionID: confession.id,
+      });
+    });
   }
 
   comment(e, confession) {
     this.d_s.commentConfession(this.eventID, confession, e);
+    // TODO check if have any email sends, if so send email
+    this.ans.logEvent("comment", {
+      eventID: this.eventID,
+      confessionID: confession.id,
+    });
   }
 
   openDialog(confession): void {
@@ -219,14 +230,14 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
         heart: 0,
         sad: 0,
         smile: 0,
-        thumbs: 0
+        thumbs: 0,
       },
       id: null,
       visible: false,
       comments: [],
       commentCount: 0,
       commentPending: 0,
-      status: "Pending Approval"
+      status: "Pending Approval",
     };
     this.d_s
       .createConfession(this.eventID, data, null, this.lastUploadedPhoto)
@@ -234,10 +245,11 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
         this.myPond.removeFiles();
         // this.showConfirmation = true;
         this.model = {};
+        // TODO check if have any email sends, if so send email
         Swal.fire({
           title: "Submitted",
           text: "Submitted confession, pending admin approval",
-          icon: "success"
+          icon: "success",
         });
         this.pending = false;
         // clear image

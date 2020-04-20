@@ -56,4 +56,45 @@ export interface Event {
   dateOpen: Date;
   dateClosed: Date;
   confessions?: any[];
+  emailNotifications: boolean;
+  contactEmail: string;
+  contactName: string;
+  adminNotifications: {
+    email: string;
+    level: "all" | "comments" | "reports" | "confession";
+  }[];
+}
+
+export class EmailTemplate {
+  active: boolean;
+  id: string;
+  subject: string;
+  html: string;
+  // text: string;
+  from: string; // from email address
+  category: string; // i.e. general, all, alumni, 2020 project etc
+  eventID: string;
+  cc: string;
+  bcc: string;
+  constructor(
+    id: string,
+    subject: string,
+    html: string,
+    // text: string,
+    from: string,
+    category: string,
+    eventID: string,
+    cc: string,
+    bcc: string
+  ) {
+    this.id = id;
+    this.subject = subject;
+    this.html = html;
+    // this.text = text;
+    this.from = from ? from : "No Reply <noreply@unasva.org>";
+    this.category = category ? category : "general";
+    this.eventID = eventID;
+    this.cc = cc;
+    this.bcc = bcc;
+  }
 }

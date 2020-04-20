@@ -58,6 +58,7 @@ import { MatSortModule } from "@angular/material/sort";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatSelectModule } from "@angular/material/select";
 import { MatMenuModule } from "@angular/material/menu";
+import { MatExpansionModule } from "@angular/material/expansion";
 
 registerPlugin(FilePondPluginFileValidateSize);
 registerPlugin(FilePondPluginFileValidateType);
@@ -65,6 +66,7 @@ registerPlugin(FilePondPluginFileValidateType);
 import { AutosizeTextComponent } from "./autosize-text/autosize-text.component";
 import { AdminDashComponent } from "./admin-dash/admin-dash.component";
 import { AuthService } from "./services/auth.service";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 const MaterialModules = [
   MatProgressSpinnerModule,
@@ -85,19 +87,19 @@ const MaterialModules = [
   MatSortModule,
   MatDialogModule,
   MatSelectModule,
-  MatMenuModule
+  MatMenuModule,
+  MatExpansionModule,
 ];
 
 const appRoutes: Routes = [
   {
     path: "infinite",
-    component: InfiniteConfessionsComponent
+    component: InfiniteConfessionsComponent,
   },
   { path: "dashboard", component: AdminDashComponent },
-  { path: "create", component: CreateEventComponent },
   { path: "", component: HomeComponent },
   { path: ":id/admin", component: AdminComponent },
-  { path: ":id", component: ConfessionsComponent }
+  { path: ":id", component: ConfessionsComponent },
 ];
 
 @NgModule({
@@ -119,7 +121,7 @@ const appRoutes: Routes = [
     ArraySortPipe,
     HomeComponent,
     AutosizeTextComponent,
-    AdminDashComponent
+    AdminDashComponent,
   ],
   imports: [
     BrowserModule,
@@ -142,12 +144,13 @@ const appRoutes: Routes = [
         {
           name: "textarea-auto-resize",
           component: AutosizeTextComponent,
-          wrappers: ["form-field"]
-        }
-      ]
+          wrappers: ["form-field"],
+        },
+      ],
     }),
     FormlyMaterialModule,
-    FilePondModule
+    FilePondModule,
+    FontAwesomeModule,
   ],
   providers: [
     DataService,
@@ -158,11 +161,12 @@ const appRoutes: Routes = [
         send_page_view: true,
         allow_ad_personalization_signals: false,
         anonymize_ip: true,
-        DEBUG_MODE: true
-      }
-    }
+        DEBUG_MODE: true,
+        APP_VERSION: "6.6.0",
+      },
+    },
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ConfessionDialogComponent]
+  entryComponents: [ConfessionDialogComponent],
 })
 export class AppModule {}

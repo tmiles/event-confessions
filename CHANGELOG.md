@@ -1,3 +1,36 @@
+# 6.6.0 (04.20.20)
+
+## Admin Dashboard
+
+1. Left sidebar responsive bottom navbar
+2. Right sidebar for summaries
+3. Implementation of left vertical tabs
+   Layout for new features and functionality of event home page
+
+## General
+
+1. Shifting emphasis to mobile redesign similat to twitter
+2. Shift to fontawesome instead of material icons
+3. Version number in data service for sharing
+4. Analytics service to log reactions, new confessions
+5. Migrated to storing events via aggregator
+6. Additional helper CSS styles
+7. Loading animation for home page
+8. Early progress for email service
+9. Early anonymous logins for security rules moving forward
+
+## Future
+
+1. The additional todos found
+2. Jest test integration
+3. Jest test coverage
+4. Documentation coverage
+5. Cypress E2E testing integration
+
+## New events
+
+1. Ability to better customize email notifications
+
 # 6.5.0 (03.31.20)
 
 ## Functionality
