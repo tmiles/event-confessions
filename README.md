@@ -26,6 +26,13 @@ All comments need to be moderated to ensure safe space to share content.
 - View images
 - View only access, no edit
 
+## Example Use
+
+1. Visit: [https://summit-confessions.web.app/example](https://summit-confessions.web.app/example) for example event
+   - Password `123`
+2. See the admin at: [https://summit-confessions.web.app/example/admin](https://summit-confessions.web.app/example/admin)
+   - Password `abc`
+
 ## Routes
 
 - /home - Base route
