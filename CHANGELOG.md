@@ -1,3 +1,24 @@
+# 6.6.0 (08.03.20)
+
+## Creation
+
+1. Created more messages for the creation form + typo
+
+## Customization
+
+1. Update the title to be customizable with boxTitle db entry
+2. Updated page name to be Love Box
+
+## General
+
+1. Update compatibility for Mat Table
+
+## Upcoming
+
+1. Need more moderation tools
+2. Need more automation process
+3. Need ability to update + see the statistics on the event admin page
+
 # 6.5.0 (03.31.20)
 
 ## Functionality

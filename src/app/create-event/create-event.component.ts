@@ -13,8 +13,8 @@ import Swal from "sweetalert2";
         width: 95%;
         margin: 10px auto;
       }
-    `
-  ]
+    `,
+  ],
 })
 export class CreateEventComponent implements OnInit {
   @Input() formType: string = "public";
@@ -28,9 +28,9 @@ export class CreateEventComponent implements OnInit {
       templateOptions: {
         label: "Password",
         placeholder: "Entry Password",
-        required: true
-      }
-    }
+        required: true,
+      },
+    },
   ];
 
   form = new FormGroup({});
@@ -44,17 +44,17 @@ export class CreateEventComponent implements OnInit {
       templateOptions: {
         label: "Event Formal Name",
         placeholder: "Event Name",
-        required: true
-      }
+        required: true,
+      },
     },
     {
       key: "organization",
       type: "input",
       templateOptions: {
-        label: "Organization Mame",
-        placeholder: "Organization Mame",
-        required: true
-      }
+        label: "Organization Name",
+        placeholder: "Organization Name",
+        required: true,
+      },
     },
     {
       key: "id",
@@ -62,8 +62,9 @@ export class CreateEventComponent implements OnInit {
       templateOptions: {
         label: "URL Event ID",
         placeholder: "URL Event ID",
-        required: true
-      }
+        required: true,
+        description: "This is going to be what the unique web link will be.",
+      },
     },
     {
       key: "password",
@@ -71,8 +72,8 @@ export class CreateEventComponent implements OnInit {
       templateOptions: {
         label: "Attendee Password",
         placeholder: "Attendee Password",
-        required: true
-      }
+        required: true,
+      },
     },
     {
       key: "adminPassword",
@@ -80,17 +81,20 @@ export class CreateEventComponent implements OnInit {
       templateOptions: {
         label: "Admin Password",
         placeholder: "Admin Password",
-        required: true
-      }
+        required: true,
+        description: "See all submissions and moderation.",
+      },
     },
     {
       key: "adminViewPassword",
       type: "input",
       templateOptions: {
         label: "Admin View Only Password",
-        placeholder: "Admin View Only Password"
-      }
-    }
+        placeholder: "Admin View Only Password",
+        description:
+          "Admin view doesn't allow for moderation. Admin view password should be different from admin password.",
+      },
+    },
   ];
 
   constructor(private ds: DataService) {}
@@ -105,8 +109,8 @@ export class CreateEventComponent implements OnInit {
         templateOptions: {
           required: true,
           label: "Contact Name",
-          placeholder: "Contact Name"
-        }
+          placeholder: "Contact Name",
+        },
       });
       this.fields.push({
         key: "contactEmail",
@@ -114,8 +118,8 @@ export class CreateEventComponent implements OnInit {
         templateOptions: {
           required: true,
           label: "Contact Email",
-          placeholder: "Contact Email"
-        }
+          placeholder: "Contact Email",
+        },
       });
     }
   }
@@ -129,14 +133,15 @@ export class CreateEventComponent implements OnInit {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Create/edit event!"
-    }).then(result => {
+      confirmButtonText: "Create/edit event!",
+    }).then((result) => {
       if (result.value) {
-        this.ds.createEvent(this.model["id"], this.model).then(val => {
+        this.ds.createEvent(this.model["id"], this.model).then((val) => {
+          // TODO send out an email telling about status to them and me
           Swal.fire({
             title: "Event modified",
             text: `${val}`,
-            icon: "success"
+            icon: "success",
           });
         });
       }

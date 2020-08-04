@@ -13,10 +13,10 @@ import { FormlyFormOptions, FormlyFieldConfig } from "@ngx-formly/core";
 @Component({
   selector: "app-infinite-confessions",
   templateUrl: "./infinite-confessions.component.html",
-  styles: []
+  styles: [],
 })
 export class InfiniteConfessionsComponent implements AfterViewInit {
-  @ViewChild(CdkVirtualScrollViewport)
+  @ViewChild(CdkVirtualScrollViewport, { static: true })
   viewport: CdkVirtualScrollViewport;
 
   batch = 20;
@@ -29,7 +29,7 @@ export class InfiniteConfessionsComponent implements AfterViewInit {
 
   form = new FormGroup({});
   model: any = {
-    from: null
+    from: null,
   };
   options: FormlyFormOptions = {};
   event = null;
@@ -46,9 +46,9 @@ export class InfiniteConfessionsComponent implements AfterViewInit {
       templateOptions: {
         label: "Password",
         placeholder: "Entry Password",
-        required: true
-      }
-    }
+        required: true,
+      },
+    },
   ];
 
   constructor(
@@ -56,25 +56,25 @@ export class InfiniteConfessionsComponent implements AfterViewInit {
     private d_s: DataService,
     private route: ActivatedRoute
   ) {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       // todo load the correct event
       this.eventName = params["id"];
       this.db
         .collection("events")
         .doc(this.eventName)
         .valueChanges()
-        .subscribe(res => {
+        .subscribe((res) => {
           this.event = res;
         });
 
       const batchMap = this.offset.pipe(
         throttleTime(500),
-        mergeMap(n => this.getBatch(n)),
+        mergeMap((n) => this.getBatch(n)),
         scan((acc, batch) => {
           return { ...acc, ...batch };
         }, {})
       );
-      this.confession_s = batchMap.pipe(map(v => Object.values(v)));
+      this.confession_s = batchMap.pipe(map((v) => Object.values(v)));
     });
   }
 
@@ -96,16 +96,13 @@ export class InfiniteConfessionsComponent implements AfterViewInit {
     return this.db
       .collection("events")
       .doc(this.eventName)
-      .collection("confessions", ref =>
-        ref
-          .orderBy("dateCreated")
-          .startAfter(offset)
-          .limit(this.batch)
+      .collection("confessions", (ref) =>
+        ref.orderBy("dateCreated").startAfter(offset).limit(this.batch)
       )
       .snapshotChanges()
       .pipe(
-        tap(arr => (arr.length ? null : (this.theEnd = true))),
-        map(arr => {
+        tap((arr) => (arr.length ? null : (this.theEnd = true))),
+        map((arr) => {
           return arr.reduce((acc, cur) => {
             const id = cur.payload.doc.id;
             const data = cur.payload.doc.data();
@@ -143,12 +140,12 @@ export class InfiniteConfessionsComponent implements AfterViewInit {
         heart: 0,
         sad: 0,
         smile: 0,
-        thumbs: 0
+        thumbs: 0,
       },
       id: null,
       visible: false,
       comments: [],
-      status: "Pending Approval"
+      status: "Pending Approval",
     };
     if (this.d_s.createConfession(this.eventName, data, null, null)) {
       this.showConfirmation = true;

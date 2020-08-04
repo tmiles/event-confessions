@@ -49,7 +49,10 @@ browserslist
 # Firebase stuff
 firestore.rules
 firestore.indexes.json
-firebase.json
 database.rules.json
 .firebaserc
 y
+
+# Password management
+environment.ts
+environment.prod.ts

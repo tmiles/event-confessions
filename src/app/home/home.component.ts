@@ -11,13 +11,13 @@ import { DataService } from "../services/data.service";
         width: 95%;
         margin: 10px auto;
       }
-    `
-  ]
+    `,
+  ],
 })
 export class HomeComponent implements OnInit {
   events$: Observable<any[]> = null;
   homeData$: Observable<any> = null;
-  public versionNumber = "6.5.0";
+  public versionNumber = "6.6.0";
 
   constructor(private ds: DataService) {}
 
