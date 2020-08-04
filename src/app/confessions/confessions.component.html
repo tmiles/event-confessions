@@ -84,25 +84,63 @@
           </mat-card> -->
         </mat-card-content>
       </mat-card>
+      <div class="row" style="margin-bottom: 30px;">
+        <div
+          class="col-xs-12 col-sm-6 col-md-6"
+          *ngIf="homeData$ | async as homeData"
+        >
+          <mat-card *ngIf="homeData.helpVisitor">
+            <mat-card-header (click)="view['help'] = !view['help']">
+              <h4>
+                <mat-icon>{{
+                  view["help"] ? "expand_less" : "expand_more"
+                }}</mat-icon>
+                Help
+              </h4>
+            </mat-card-header>
+            <mat-card-content
+              *ngIf="view['help']"
+              [innerHTML]="homeData.helpVisitor"
+            >
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6" *ngIf="event.rules">
+          <mat-card>
+            <mat-card-header (click)="view['rules'] = !view['rules']">
+              <h4>
+                <mat-icon>{{
+                  view["rules"] ? "expand_less" : "expand_more"
+                }}</mat-icon>
+                Community rules/guidelines
+              </h4>
+            </mat-card-header>
+            <mat-card-content *ngIf="view['rules']" [innerHTML]="event.rules">
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
       <ng-container *ngIf="confessions && confessions.length > 0; else noItems">
         <div
           class="input-group input-group-md"
           style="margin-top: 10px; width: 100%;"
         >
-          <input
-            type="text"
-            class="form-control"
-            aria-describedby="inputGroup-sizing-lg"
-            [(ngModel)]="searchField"
-            placeholder="Search confessions (text, to, from)"
-          />
+          <mat-form-field style="width: 100%;">
+            <mat-label>Search confessions (text, to, from)</mat-label>
+            <input
+              matInput
+              type="text"
+              class="form-control"
+              [(ngModel)]="searchField"
+            />
+          </mat-form-field>
         </div>
         <div class="row">
           <mat-form-field style="margin-right: 20px;">
             <mat-label>Sort Field</mat-label>
             <mat-select [(value)]="sortField">
-              <!-- <mat-option value="dateApproved">Approve Date</mat-option> -->
-              <mat-option value="dateCreated">Date</mat-option>
+              <mat-option value="dateApproved">Approve Date</mat-option>
+              <mat-option value="dateCreated">Create Date</mat-option>
               <mat-option value="score">Popularity</mat-option>
               <mat-option value="commentCount">Comments</mat-option>
             </mat-select>

@@ -1,3 +1,39 @@
+# 6.7.0 (08.04.20)
+
+## Admin
+
+1. Admins have more power over customization
+2. Admins can update all the fields for their event i.e. passwords, name, etc
+3. Admins can now see dashboard pie chart (more charts coming soon) + statistic numbers on conversions
+
+## Visitor confessions
+
+1. Can now toggle optional visitor help message
+2. Can now toggle optional rules/guidelines
+
+## Customizability
+
+1. Ability for new sitewide help for visitors + admins
+2. Ability to create new rules/guidelines section on the webpage
+
+## Functionality
+
+1. Migrated confessions analytics to a standalone component
+2. Upgraded the crate event to be more standalone
+
+## Bugfixes
+
+# 6.6.1 (08.03.20)
+
+## Bugfixes
+
+1. Hotfix admin table refresh
+
+## Customization
+
+1. Added new option for approve date
+2. Set approve date as default for visitor feed
+
 # 6.6.0 (08.03.20)
 
 ## Creation

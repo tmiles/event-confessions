@@ -18,6 +18,7 @@ import Swal from "sweetalert2";
 })
 export class CreateEventComponent implements OnInit {
   @Input() formType: string = "public";
+  @Input() event: any;
   loginForm = new FormGroup({});
   loginModel: any = {};
   loginOptions: FormlyFormOptions = {};
@@ -95,6 +96,16 @@ export class CreateEventComponent implements OnInit {
           "Admin view doesn't allow for moderation. Admin view password should be different from admin password.",
       },
     },
+    {
+      key: "rules",
+      type: "textarea-auto-resize",
+      templateOptions: {
+        rows: 4,
+        label: "Community rules/guidelines",
+        description:
+          "Community rules on submissions or contact information for moderators.",
+      },
+    },
   ];
 
   constructor(private ds: DataService) {}
@@ -102,6 +113,14 @@ export class CreateEventComponent implements OnInit {
   ngOnInit() {
     if (this.formType === "admin") {
       // Allow updating
+      if (this.event) {
+        // console.log("Admin moderating");
+        // pull up event details
+        this.model = this.event;
+        // console.log("Loading event information right now");
+      } else {
+        // TODO Do other stuff (nothing right now)
+      }
     } else if (this.formType === "public") {
       this.fields.push({
         key: "contactName",
@@ -125,7 +144,7 @@ export class CreateEventComponent implements OnInit {
   }
 
   // TODO ensure document doesn't already exist first
-  create() {
+  update() {
     Swal.fire({
       title: "Event Creation",
       text: "Create/edit event?",
@@ -147,6 +166,4 @@ export class CreateEventComponent implements OnInit {
       }
     });
   }
-
-  update() {}
 }

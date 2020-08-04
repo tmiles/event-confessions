@@ -10,6 +10,7 @@ import { MatTableDataSource } from "@angular/material/table";
 import { ConfessionDialogComponent } from "../confession-dialog/confession-dialog.component";
 import Swal from "sweetalert2";
 import { first } from "rxjs/operators";
+import { Observable } from "rxjs";
 
 @Component({
   selector: "app-admin",
@@ -21,6 +22,10 @@ export class AdminComponent implements OnInit, AfterViewInit {
   model: any = {};
   loginModel = null;
   authenticated: string = "";
+  view = {
+    analytics: false,
+    editForm: false,
+  };
 
   options: FormlyFormOptions = {};
   fields: FormlyFieldConfig[] = [
@@ -39,11 +44,12 @@ export class AdminComponent implements OnInit, AfterViewInit {
   event = null;
   sub = null;
   subscription = null;
+  homeData$: Observable<any> = null;
   /* Table items */
   displayedColumns = ["dateCreated", "to", "status", "manage"];
   dataSource: MatTableDataSource<any>;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   // matPaginator
 
@@ -68,6 +74,7 @@ export class AdminComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
+    this.homeData$ = this.d_s.getHomeData();
     this.route.params.subscribe((params) => {
       // todo load the correct event
       this.eventID = params["id"];

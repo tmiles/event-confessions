@@ -50,5 +50,7 @@
     </mat-card-header>
     <mat-card-content [innerHTML]="data.contact.html"></mat-card-content>
   </mat-card>
-  <app-create-event *ngIf="data.allowCreate"></app-create-event>
+  <mat-card>
+    <app-create-event *ngIf="data.allowCreate"></app-create-event>
+  </mat-card>
 </div>

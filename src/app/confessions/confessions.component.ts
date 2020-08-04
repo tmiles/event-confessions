@@ -19,6 +19,7 @@ import {
 import { Confession } from "../types/types";
 import Swal from "sweetalert2";
 import { first } from "rxjs/operators";
+import { Observable } from "rxjs";
 
 @Component({
   selector: "app-confessions",
@@ -48,7 +49,7 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
   loggedIn = false;
   model: any = {};
   showConfirmation = false;
-  sortField = "dateCreated";
+  sortField = "dateApproved";
   sortValue = "descending";
 
   pending = false;
@@ -68,6 +69,8 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
 
   eventID: string = null;
   event = null;
+  homeData$: Observable<any> = null;
+  view = { help: false, rules: false };
   sub = null;
 
   /* Table items */
@@ -78,8 +81,8 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
   /* Confessions raw */
   confessions: any[] = null; // old system switch it out
 
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   @ViewChild("myPond") myPond: any;
 
@@ -112,6 +115,7 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.homeData$ = this.d_s.getHomeData();
     this.route.params.subscribe((params) => {
       // todo load the correct event
       this.eventID = params["id"];
@@ -198,7 +202,7 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
   }
 
   openDialog(confession): void {
-    console.log(confession);
+    // console.log(confession);
     // const dialogRef = this.dialog.open(ConfessionDialogComponent, {
     //   width: '750px',
     //   data: {confession: confession, eventID: this.eventID}

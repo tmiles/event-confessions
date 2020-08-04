@@ -10,13 +10,13 @@ export class AuthService {
   userID: string = null;
   constructor(public afAuth: AngularFireAuth, private db: AngularFirestore) {
     this.user$ = this.afAuth.authState.pipe(
-      switchMap(user => {
+      switchMap((user) => {
         if (user) {
           this.userID = user.uid;
           return this.db.doc(`users/${this.userID}`).valueChanges();
         }
         this.userID = null;
-        this.afAuth.auth.signInAnonymously().then(val => {
+        this.afAuth.auth.signInAnonymously().then((val) => {
           this.createUser(val.user.uid);
         });
         return of(null);
@@ -30,7 +30,7 @@ export class AuthService {
   }
 
   createUser(uid: string): Promise<void> {
-    console.log("Created new user");
+    // console.log("Created new user");
     return this.db
       .doc(`users/${uid}`)
       .set({ id: uid, uid: uid, confessions: {}, events: {} }, { merge: true });

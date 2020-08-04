@@ -39,22 +39,65 @@
         Manage and see all submissions.
       </mat-card-content>
     </mat-card>
-    <mat-card>
-      <mat-card-header>
-        <h3>Analytics</h3>
-      </mat-card-header>
-      <mat-card-content>
-        Analytics dashboard coming soon...
-      </mat-card-content>
-    </mat-card>
-    <mat-card>
-      <mat-card-header>
-        <h3>Modify event</h3>
-      </mat-card-header>
-      <mat-card-content>
-        Form is coming soon...
-      </mat-card-content>
-    </mat-card>
+    <div class="row">
+      <div class="col-sm-12 col-md-6 col-lg-4">
+        <mat-card>
+          <mat-card-header (click)="view['analytics'] = !view['analytics']">
+            <h3>
+              <mat-icon>{{
+                view["analytics"] ? "expand_less" : "expand_more"
+              }}</mat-icon>
+              Analytics
+            </h3>
+          </mat-card-header>
+          <mat-card-content *ngIf="view['analytics']">
+            <!-- Analytics dashboard coming soon...
+             -->
+            <app-admin-event-analytic
+              [event]="event"
+            ></app-admin-event-analytic>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-4">
+        <mat-card>
+          <mat-card-header (click)="view['editForm'] = !view['editForm']">
+            <h3>
+              <mat-icon>{{
+                view["editForm"] ? "expand_less" : "expand_more"
+              }}</mat-icon>
+              Edit details
+            </h3>
+          </mat-card-header>
+          <mat-card-content *ngIf="view['editForm']">
+            <app-create-event
+              formType="admin"
+              [event]="event"
+            ></app-create-event>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div
+        class="col-sm-12 col-md-6 col-lg-4"
+        *ngIf="homeData$ | async as homeData"
+      >
+        <mat-card *ngIf="homeData.helpAdmin">
+          <mat-card-header (click)="view['help'] = !view['help']">
+            <h3>
+              <mat-icon>{{
+                view["help"] ? "expand_less" : "expand_more"
+              }}</mat-icon>
+              Help
+            </h3>
+          </mat-card-header>
+          <mat-card-content
+            *ngIf="view['help']"
+            [innerHTML]="homeData.helpAdmin"
+          >
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
 
     <mat-card>
       <mat-card-header>

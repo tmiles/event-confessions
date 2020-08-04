@@ -1,0 +1,78 @@
+<div class="grayBg" style="padding: 10px;" *ngIf="event">
+  <div class="row" *ngIf="eventAnalytics$ | async as analytics">
+    <!-- <span style="font-size: 10px;">Last updated: {{analytics.lastUpdate.toDate() | date:'short'}}</span> -->
+    <span style="font-size: 10px; display: inline-block;"
+      >Last updated: {{ analytics.lastUpdate.toDate() | date: "short" }}</span
+    >
+    <button
+      mat-icon-button
+      style="margin-left: auto; display: inline-block; font-size: 12px;"
+      (click)="forceUpdate(event.id)"
+    >
+      <mat-icon>refresh</mat-icon>
+    </button>
+    <div style="display: flex; justify-content: center; flex-wrap: wrap;">
+      <div
+        style="width: 100px; display: inline-block; height: 100px; margin: 5px;"
+        class="text-center"
+      >
+        <h3>{{ analytics.confessions.total }}</h3>
+        <p>Confessions</p>
+      </div>
+      <div
+        style="width: 100px; display: inline-block; height: 100px; margin: 5px;"
+        class="text-center"
+      >
+        <h3>{{ analytics.reactions.total }}</h3>
+        <p>Reactions</p>
+      </div>
+      <div
+        style="width: 100px; display: inline-block; height: 100px; margin: 5px;"
+        class="text-center"
+      >
+        <h3>{{ analytics.comments.total }}</h3>
+        <p>Comments</p>
+      </div>
+      <div
+        style="width: 100px; display: inline-block; height: 100px; margin: 5px;"
+        class="text-center"
+      >
+        <h3>{{ analytics.averages.acceptRate * 100 | number: "1.1-2" }}%</h3>
+        <p>Accept Rate</p>
+      </div>
+      <div
+        style="width: 100px; display: inline-block; height: 100px; margin: 5px;"
+        class="text-center"
+      >
+        <h3>{{ analytics.averages.reactions | number: "1.1-2" }}</h3>
+        <p>Avg Reactions</p>
+      </div>
+      <div
+        style="width: 100px; display: inline-block; height: 100px; margin: 5px;"
+        class="text-center"
+      >
+        <h3>{{ analytics.averages.comments | number: "1.1-2" }}</h3>
+        <p>Avg Comments</p>
+      </div>
+    </div>
+    <div>
+      <mat-tab-group>
+        <mat-tab label="Pies">
+          <canvas
+            baseChart
+            [data]="pieChartData"
+            [labels]="pieChartLabels"
+            chartType="pie"
+            [options]="pieChartOptions"
+            [plugins]="pieChartPlugins"
+            [colors]="pieChartColors"
+            legend="true"
+          >
+          </canvas>
+        </mat-tab>
+        <!-- <mat-tab label="Bar"></mat-tab>
+        <mat-tab label="Line"></mat-tab> -->
+      </mat-tab-group>
+    </div>
+  </div>
+</div>

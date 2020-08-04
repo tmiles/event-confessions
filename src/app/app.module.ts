@@ -65,6 +65,7 @@ registerPlugin(FilePondPluginFileValidateType);
 import { AutosizeTextComponent } from "./autosize-text/autosize-text.component";
 import { AdminDashComponent } from "./admin-dash/admin-dash.component";
 import { AuthService } from "./services/auth.service";
+import { AdminEventAnalyticComponent } from './admin-event-analytic/admin-event-analytic.component';
 
 const MaterialModules = [
   MatProgressSpinnerModule,
@@ -119,7 +120,8 @@ const appRoutes: Routes = [
     ArraySortPipe,
     HomeComponent,
     AutosizeTextComponent,
-    AdminDashComponent
+    AdminDashComponent,
+    AdminEventAnalyticComponent
   ],
   imports: [
     BrowserModule,
