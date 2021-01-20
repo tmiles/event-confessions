@@ -53,3 +53,7 @@ firebase.json
 database.rules.json
 .firebaserc
 y
+
+/documentation
+src/environments/environment.ts
+src/environments/environment.prod.ts

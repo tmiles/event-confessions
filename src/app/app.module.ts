@@ -17,7 +17,7 @@ import { FormlyMaterialModule } from "@ngx-formly/material";
 
 import { InfiniteScrollModule } from "ngx-infinite-scroll";
 import { AppComponent } from "./app.component";
-import { AdminComponent } from "./admin/admin.component";
+import { AdminEventComponent } from "./admin-event/admin-event.component";
 import { DataService } from "./services/data.service";
 import { ConfessionsComponent } from "./confessions/confessions.component";
 import { ConfessionComponent } from "./confession/confession.component";
@@ -39,73 +39,35 @@ import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
 import { HomeComponent } from "./home/home.component";
 
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { MatDividerModule } from "@angular/material/divider";
-import { MatCardModule } from "@angular/material/card";
-import { MatIconModule } from "@angular/material/icon";
-import { MatListModule } from "@angular/material/list";
-import { MatTabsModule } from "@angular/material/tabs";
-import { MatButtonModule } from "@angular/material/button";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatBadgeModule } from "@angular/material/badge";
-import { MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatButtonToggleModule } from "@angular/material/button-toggle";
-import { MatTableModule } from "@angular/material/table";
-import { MatPaginatorModule } from "@angular/material/paginator";
-import { MatSortModule } from "@angular/material/sort";
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatSelectModule } from "@angular/material/select";
-import { MatMenuModule } from "@angular/material/menu";
-import { MatExpansionModule } from "@angular/material/expansion";
-
 registerPlugin(FilePondPluginFileValidateSize);
 registerPlugin(FilePondPluginFileValidateType);
 
 import { AutosizeTextComponent } from "./autosize-text/autosize-text.component";
-import { AdminDashComponent } from "./admin-dash/admin-dash.component";
-import { AuthService } from "./services/auth.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-
-const MaterialModules = [
-  MatProgressSpinnerModule,
-  MatDividerModule,
-  MatCardModule,
-  MatIconModule,
-  MatListModule,
-  MatTabsModule,
-  MatButtonModule,
-  MatFormFieldModule,
-  MatInputModule,
-  MatBadgeModule,
-  MatSlideToggleModule,
-  MatTooltipModule,
-  MatButtonToggleModule,
-  MatTableModule,
-  MatPaginatorModule,
-  MatSortModule,
-  MatDialogModule,
-  MatSelectModule,
-  MatMenuModule,
-  MatExpansionModule,
-];
+import { ServiceWorkerModule } from "@angular/service-worker";
+import { MaterialModules } from "./core/core.module";
 
 const appRoutes: Routes = [
   {
     path: "infinite",
     component: InfiniteConfessionsComponent,
   },
-  { path: "dashboard", component: AdminDashComponent },
   { path: "", component: HomeComponent },
-  { path: ":id/admin", component: AdminComponent },
+  {
+    path: "admin",
+    loadChildren: () =>
+      import("./admin-dashboard/admin-dashboard.module").then(
+        (m) => m.AdminDashboardModule
+      ),
+  },
+  { path: ":id/admin", component: AdminEventComponent },
   { path: ":id", component: ConfessionsComponent },
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
-    AdminComponent,
+    AdminEventComponent,
     ConfessionsComponent,
     ConfessionComponent,
     CommentComponent,
@@ -121,7 +83,6 @@ const appRoutes: Routes = [
     ArraySortPipe,
     HomeComponent,
     AutosizeTextComponent,
-    AdminDashComponent,
   ],
   imports: [
     BrowserModule,
@@ -151,10 +112,12 @@ const appRoutes: Routes = [
     FormlyMaterialModule,
     FilePondModule,
     FontAwesomeModule,
+    ServiceWorkerModule.register("ngsw-worker.js", {
+      enabled: environment.production,
+    }),
   ],
+  exports: [RouterModule],
   providers: [
-    DataService,
-    AuthService,
     {
       provide: CONFIG,
       useValue: {
@@ -162,7 +125,7 @@ const appRoutes: Routes = [
         allow_ad_personalization_signals: false,
         anonymize_ip: true,
         DEBUG_MODE: true,
-        APP_VERSION: "6.6.0",
+        APP_VERSION: "6.7.0",
       },
     },
   ],

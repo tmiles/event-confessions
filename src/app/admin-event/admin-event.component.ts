@@ -12,11 +12,11 @@ import Swal from "sweetalert2";
 import { first } from "rxjs/operators";
 
 @Component({
-  selector: "app-admin",
-  templateUrl: "./admin.component.html",
-  styleUrls: ["./admin.component.css"]
+  selector: "app-event-admin",
+  templateUrl: "./admin-event.component.html",
+  styleUrls: ["./admin-event.component.css"],
 })
-export class AdminComponent implements OnInit, AfterViewInit {
+export class AdminEventComponent implements OnInit, AfterViewInit {
   form = new FormGroup({});
   model: any = {};
   loginModel = null;
@@ -30,9 +30,9 @@ export class AdminComponent implements OnInit, AfterViewInit {
       templateOptions: {
         label: "Password",
         placeholder: "Admin Password",
-        required: true
-      }
-    }
+        required: true,
+      },
+    },
   ];
 
   eventID: string = null;
@@ -67,14 +67,14 @@ export class AdminComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       // todo load the correct event
       this.eventID = params["id"];
       this.d_s
         .getEvent(this.eventID)
         .pipe(first())
         .toPromise()
-        .then(res => {
+        .then((res) => {
           if (!res) {
             Swal.fire({
               icon: "error",
@@ -83,7 +83,7 @@ export class AdminComponent implements OnInit, AfterViewInit {
               timer: 1500,
               showConfirmButton: false,
               showCancelButton: false,
-              showCloseButton: false
+              showCloseButton: false,
             }).then(() => {
               this.router.navigate(["../../"], { relativeTo: this.route });
             });
@@ -143,7 +143,7 @@ export class AdminComponent implements OnInit, AfterViewInit {
     // }
     this.subscription = this.d_s
       .getConfessions(this.eventID, null)
-      .subscribe(res => {
+      .subscribe((res) => {
         this.dataSource = new MatTableDataSource(res);
         this.dataSource.paginator = this.paginator;
         // this.dataSource.paginator.firstPage();
@@ -161,8 +161,8 @@ export class AdminComponent implements OnInit, AfterViewInit {
       data: {
         confession: confession,
         eventID: this.eventID,
-        auth: this.authenticated
-      }
+        auth: this.authenticated,
+      },
     });
   }
 

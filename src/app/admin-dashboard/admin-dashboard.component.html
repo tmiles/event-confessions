@@ -325,72 +325,16 @@
         <input matInput placeholder="Search Dashboard" />
       </mat-form-field>
       <div>
-        <div class="row" *ngIf="allStats$ | async as summary">
-          <div>
-            <h3>Summaries</h3>
-            <mat-accordion>
-              <mat-expansion-panel expanded="true">
-                <mat-expansion-panel-header>
-                  Events
-                </mat-expansion-panel-header>
-                <div class="text-center">
-                  <h3>{{ summary.stats.events }}</h3>
-                  <p>Total Events</p>
-                  <h3>{{ summary.stats.events }}</h3>
-                  <p>Pending Events</p>
-                  <h3>{{ summary.stats.events }}</h3>
-                  <p>Active Events</p>
-                  <h3>{{ summary.stats.events }}</h3>
-                  <p>Expired Events</p>
-                </div>
-              </mat-expansion-panel>
-              <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                  Avg Event
-                </mat-expansion-panel-header>
-                <div class="text-center">
-                  <h3>
-                    {{ summary.stats.averages.reactions | number: "0.0-2" }}
-                  </h3>
-                  <p>Avg Reactions Per Confession</p>
-                  <h3>---</h3>
-                  <p>Most Per Confession</p>
-                  <h3>---</h3>
-                  <p>Fewest Per Confession</p>
-                </div>
-              </mat-expansion-panel>
-              <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                  Avg Confession
-                </mat-expansion-panel-header>
-                <div class="text-center">
-                  <h3>
-                    {{ summary.stats.averages.reactions | number: "0.0-2" }}
-                  </h3>
-                  <p>Avg Reactions Per Confession</p>
-                  <h3>--</h3>
-                  <p>Most Reactions Per Confession</p>
-                </div>
-              </mat-expansion-panel>
-              <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                  Avg Day
-                </mat-expansion-panel-header>
-                <div class="text-center">
-                  <h3>--</h3>
-                  <p>Avg Confessions Per Day</p>
-                  <h3>--</h3>
-                  <p>Most Confessions Per Day</p>
-                </div>
-              </mat-expansion-panel>
-            </mat-accordion>
-          </div>
-        </div>
-        <mat-card *ngIf="false">
+        <h3>Summaries</h3>
+        <app-admin-event-summary
+          [summary]="allStats$"
+        ></app-admin-event-summary>
+        <mat-card>
           Dashboard Chart Recent number of creations Chart of them
           (multiselector)
         </mat-card>
       </div>
     </aside>
   </div>
+  <router-outlet name="admin"></router-outlet>
 </div>

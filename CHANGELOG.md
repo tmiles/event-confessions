@@ -1,3 +1,12 @@
+# 6.7.0 (04.20.20)
+
+## Admin Dashboard
+
+## General
+
+1. Compodoc generation
+2. PWA Integration
+
 # 6.6.0 (04.20.20)
 
 ## Admin Dashboard

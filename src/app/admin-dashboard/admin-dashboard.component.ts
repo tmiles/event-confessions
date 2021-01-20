@@ -18,11 +18,11 @@ import {
 import { faClock, faChartBar } from "@fortawesome/free-regular-svg-icons";
 
 @Component({
-  selector: "app-admin-dash",
-  templateUrl: "./admin-dash.component.html",
-  styleUrls: ["./admin-dash.component.css"],
+  selector: "app-admin-dashboard",
+  templateUrl: "./admin-dashboard.component.html",
+  styleUrls: ["./admin-dashboard.component.css"],
 })
-export class AdminDashComponent implements OnInit {
+export class AdminDashboardComponent implements OnInit {
   icons = {
     home: faHome,
     pending: faClock,

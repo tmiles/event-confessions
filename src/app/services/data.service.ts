@@ -1,19 +1,9 @@
 import { Injectable, Inject } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { Observable } from "rxjs";
-import {
-  map,
-  tap,
-  scan,
-  mergeMap,
-  throttleTime,
-  take,
-  first,
-  finalize,
-} from "rxjs/operators";
+import { map, tap, first, finalize } from "rxjs/operators";
 import { Confession, Comment } from "../types/types";
 import { AngularFireStorage } from "@angular/fire/storage";
-import { Router } from "@angular/router";
 
 @Injectable({
   providedIn: "root",
@@ -25,8 +15,7 @@ export class DataService {
 
   constructor(
     private db: AngularFirestore,
-    private afstore: AngularFireStorage,
-    private router: Router
+    private afstore: AngularFireStorage
   ) {
     // this.summarizeData("sww20").then();
     // this.duplicateDoc('events/sw-apex-4', 'events/u-16');
