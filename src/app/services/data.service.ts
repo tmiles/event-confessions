@@ -9,7 +9,7 @@ import { AngularFireStorage } from "@angular/fire/storage";
   providedIn: "root",
 })
 export class DataService {
-  public versionNumber = "6.8.0";
+  public versionNumber = "6.9.0";
   public recent: Observable<Confession[]> = null;
   public all: Observable<Confession[]> = null;
 

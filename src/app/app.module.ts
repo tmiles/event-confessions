@@ -125,7 +125,7 @@ const appRoutes: Routes = [
         allow_ad_personalization_signals: false,
         anonymize_ip: true,
         DEBUG_MODE: true,
-        APP_VERSION: "6.8.0",
+        APP_VERSION: "6.9.0",
       },
     },
   ],
