@@ -9,7 +9,7 @@ import { AngularFireStorage } from "@angular/fire/storage";
   providedIn: "root",
 })
 export class DataService {
-  public versionNumber = "6.6.0";
+  public versionNumber = "6.8.0";
   public recent: Observable<Confession[]> = null;
   public all: Observable<Confession[]> = null;
 
@@ -736,7 +736,7 @@ export class DataService {
       .get()
       .pipe(first())
       .toPromise();
-    let data = {
+    let data : any = {
       eventID: eventID,
       lastUpdate: new Date(),
       confessions: { total: confessions.size, accepted: 0, rejected: 0 },
@@ -755,7 +755,7 @@ export class DataService {
     };
 
     confessions.forEach((val) => {
-      let v = val.data();
+      let v: any = val.data();
       data.confessions.accepted += v.visible ? 1 : 0;
       data.confessions.rejected +=
         v.status && v.status.trim().toLowerCase() === "not approved" ? 1 : 0;
