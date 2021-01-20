@@ -88,7 +88,7 @@ const appRoutes: Routes = [
     BrowserModule,
     BrowserAnimationsModule,
     InfiniteScrollModule,
-    RouterModule.forRoot(appRoutes),
+    RouterModule.forRoot(appRoutes, { relativeLinkResolution: 'legacy' }),
     ScrollingModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
