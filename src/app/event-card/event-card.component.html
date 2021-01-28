@@ -1,0 +1,13 @@
+<mat-card *ngIf="confessionEvent">
+    <h5>{{confessionEvent.formal_name}}</h5>
+    <mat-card-content>
+        Event Description -- Last Confession Date
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-button matTooltip="Access event confessions" [routerLink]="'/e/' + confessionEvent.id">Read
+            More</button>
+        <button mat-icon-button matTooltip="Favorite Event">
+            <fa-icon [icon]="icons.heart"></fa-icon>
+        </button>
+    </mat-card-actions>
+</mat-card>

@@ -1,3 +1,49 @@
+# 7.0.0 (01.27.21)
+
+## Events
+
+1. Ability to favorite events
+2. Integrating bottom mobile menu to create, filter, search
+3. Create FAB to create confessions (popup now)
+4. Additional fields for description and community rules
+5. New event fields
+
+## Event Admin
+
+1. Edit passwords and other event details
+2. Checklist of actions to take
+3. New summary
+4. New design to integrate data exports and charts
+5. New database help articles
+6. New event create menu with stepper, new fields
+7. Simplifying the event admin portion
+
+## Overall
+
+1. New navigation
+2. New home page setup
+3. New url structure for events
+4. New setup for feed back
+5. New color schemes
+6. More mobile design
+7. New stepper component for forms
+8. New data pipes
+
+## Breaking changes
+
+1. Links need to have new system
+2. Can't create events through the current fields
+
+## Upcoming
+
+1. User feed
+2. Favoriting events
+3. More admin analytics
+4. Leave feedback module
+5. Google page analytics
+6. Intro JS tutorial for first login
+7. Authentication tokens or expiring passwords
+
 # 6.7.0 (04.20.20)
 
 ## Admin Dashboard

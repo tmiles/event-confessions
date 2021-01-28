@@ -7,17 +7,29 @@ import { AnalyticsService } from "../services/analytics.service";
 @Component({
   selector: "app-confession",
   templateUrl: "./confession.component.html",
-  styles: ["i.em { font-size: 12px; }"],
+  styles: [
+    "i.em { font-size: 12px; }",
+    `
+      .mat-card-actions .mat-icon {
+        color: #0336ff;
+        font-size: 14px;
+      }
+    `,
+  ],
 })
 export class ConfessionComponent {
   @Input("confession") confession;
+
   @Output() clickReact: EventEmitter<string> = new EventEmitter();
   @Output() clickComment: EventEmitter<Comment> = new EventEmitter();
+  @Output() toggleFavorite: EventEmitter<boolean> = new EventEmitter();
+
   showReactions = false;
   showComments = false;
   commentMessage = "";
   sentComment = false;
   showImage = false;
+  @Input() favorited: boolean = false;
   reactionTypes = [
     { data: "heart", icon: "em em-heart_eyes" },
     { data: "smile", icon: "em em-laughing" },
@@ -26,6 +38,15 @@ export class ConfessionComponent {
   ];
 
   constructor(private ds: DataService, private ans: AnalyticsService) {}
+
+  ngOnInit(): void {
+    this.favorited = this.ds.ifFavorited(
+      this.confession.eventID,
+      this.confession.id
+    )
+      ? true
+      : false;
+  }
 
   react(type: string) {
     this.clickReact.emit(type);
@@ -68,5 +89,28 @@ export class ConfessionComponent {
         });
       }
     });
+  }
+
+  async toggleFavoriteConfession(confession: any) {
+    this.ds
+      .toggleFavoriteConfession(confession.eventID, confession)
+      .then((val) => {
+        if (val) {
+          this.ans.logEvent("favorite", {
+            eventID: confession.eventID,
+            confessionID: confession.id,
+          });
+          this.favorited = true;
+          this.toggleFavorite.emit(true);
+        } else {
+          this.ans.logEvent("unfavorite", {
+            eventID: confession.eventID,
+            confessionID: confession.id,
+          });
+          this.favorited = false;
+
+          this.toggleFavorite.emit(false);
+        }
+      });
   }
 }

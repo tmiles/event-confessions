@@ -1,0 +1,21 @@
+<h3 style="font-weight: 300;">Write a confession</h3>
+<form [formGroup]="form" (ngSubmit)="submit()">
+    <formly-form [model]="model" [fields]="data.submitForm" [options]="options" [form]="form">
+        <div *ngIf="model && model['to']">
+            <label>Upload a photo -
+                <span style="font-size: 8pt;">Under 10mb, .png, .jpg</span></label>
+            <file-pond #myPond [options]="pondOptions" (onaddfile)="pondHandleAddFile($event)"
+                (onremovefile)="pondHandleRemoveFile($event)">
+            </file-pond>
+        </div>
+
+        <button mat-raised-button type="submit" *ngIf="model && model.to && model.to.length > 0"
+            [disabled]="!form.valid || pending">
+            <span *ngIf="!pending">Submit</span>
+            <span *ngIf="pending">PENDING</span>
+        </button>
+
+    </formly-form>
+</form>
+
+<button mat-raised-button color="warn" (click)="cancelDialog()">Cancel</button>

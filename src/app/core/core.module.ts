@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 import { AnalyticsService } from "../services/analytics.service";
 import { AuthService } from "../services/auth.service";
 import { DataService } from "../services/data.service";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatDividerModule } from "@angular/material/divider";
@@ -25,10 +24,12 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatSelectModule } from "@angular/material/select";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatExpansionModule } from "@angular/material/expansion";
-import { FormlyModule } from "@ngx-formly/core";
-import { AutosizeTextComponent } from "../autosize-text/autosize-text.component";
+import {
+  MatHorizontalStepper,
+  MatStepperModule,
+} from "@angular/material/stepper";
+import { MatChipsModule } from "@angular/material/chips";
 import { CONFIG } from "@angular/fire/analytics";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 export const MaterialModules = [
   MatProgressSpinnerModule,
@@ -51,6 +52,8 @@ export const MaterialModules = [
   MatSelectModule,
   MatMenuModule,
   MatExpansionModule,
+  MatChipsModule,
+  MatStepperModule,
 ];
 
 @NgModule({
@@ -68,7 +71,7 @@ export const MaterialModules = [
         allow_ad_personalization_signals: false,
         anonymize_ip: true,
         DEBUG_MODE: true,
-        APP_VERSION: "6.6.0",
+        APP_VERSION: "7.0.0",
       },
     },
   ],

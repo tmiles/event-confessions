@@ -20,6 +20,7 @@ export interface Confession {
   commentCount?: number;
   commentPending?: number;
   status: string; // not approved, pending comments etc
+  pinned?: Date; // date string for when it was pinned
 }
 
 export interface Comment {
@@ -63,6 +64,8 @@ export interface Event {
     email: string;
     level: "all" | "comments" | "reports" | "confession";
   }[];
+  description?: string;
+  communityRules?: string;
 }
 
 export class EmailTemplate {

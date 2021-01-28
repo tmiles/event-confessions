@@ -1,340 +1,248 @@
-<div class="container">
-  <mat-card *ngIf="authenticated === ''" style="margin-top: 40px;">
-    <mat-card-content>
-      <h3>
-        Password Protected Center
-      </h3>
-      <form [formGroup]="loginForm">
-        <formly-form
-          [model]="loginModel"
-          [fields]="loginFields"
-          [options]="loginOptions"
-          [form]="loginForm"
-        >
-          <button
-            [disabled]="loginModel.pass === ''"
-            mat-raised-button
-            color="primary"
-            (click)="passSecurity(loginModel.pass)"
-          >
-            Submit
-          </button>
-        </formly-form>
-      </form>
-    </mat-card-content>
-  </mat-card>
+<article>
+  <section class="max">
+    <mat-card *ngIf="authenticated === ''" style="margin-top: 40px;">
+      <mat-card-content>
+        <h3>
+          Password Protected Center
+        </h3>
+        <form [formGroup]="loginForm">
+          <formly-form [model]="loginModel" [fields]="loginFields" [options]="loginOptions" [form]="loginForm">
+            <button [disabled]="loginModel.pass === ''" mat-raised-button color="primary"
+              (click)="passSecurity(loginModel.pass)">
+              Submit
+            </button>
+          </formly-form>
+        </form>
+      </mat-card-content>
+    </mat-card>
 
-  <div
-    class="flex dashboardPage"
-    *ngIf="authenticated != ''"
-    style="padding-top: 10px;"
-  >
-    <nav class="nav">
-      <ul>
-        <li
-          [ngClass]="{ active: currentDash === 'home' }"
-          (click)="navigateDash('home')"
-        >
-          <fa-icon [icon]="icons.home"></fa-icon
-          ><span class="nav-text">Home</span>
-        </li>
-        <li
-          [ngClass]="{ active: currentDash === 'events' }"
-          (click)="navigateDash('events')"
-        >
-          <fa-icon [icon]="icons.events"></fa-icon
-          ><span class="nav-text">Events</span>
-        </li>
-        <li
-          [ngClass]="{ active: currentDash === 'create' }"
-          (click)="navigateDash('create')"
-          class="showSmall"
-        >
-          <fa-icon [icon]="icons.create"></fa-icon
-          ><span class="nav-text">Create</span>
-        </li>
-        <li
-          [ngClass]="{ active: currentDash === 'reports' }"
-          (click)="navigateDash('reports')"
-        >
-          <fa-icon [icon]="icons.reports"></fa-icon
-          ><span class="nav-text">Reports</span>
-        </li>
-        <li
-          [ngClass]="{ active: currentDash === 'settings' }"
-          (click)="navigateDash('settings')"
-        >
-          <fa-icon [icon]="icons.settings"></fa-icon
-          ><span class="nav-text">Settings</span>
-        </li>
-      </ul>
-      <button
-        class="showBig full-width createButton"
-        mat-raised-button
-        (click)="navigateDash('create')"
-        color="primary"
-      >
-        <fa-icon [icon]="icons.create"></fa-icon
-        ><span class="nav-text">Create</span>
-      </button>
-      <!-- Popup creation or link-->
-    </nav>
+    <div class="flex dashboardPage" *ngIf="authenticated != ''" style="padding-top: 10px;">
+      <nav class="nav">
+        <ul>
+          <li [ngClass]="{ active: currentDash === 'home' }" (click)="navigateDash('home')">
+            <fa-icon [icon]="icons.home"></fa-icon><span class="nav-text">Home</span>
+          </li>
+          <li [ngClass]="{ active: currentDash === 'events' }" (click)="navigateDash('events')">
+            <fa-icon [icon]="icons.events"></fa-icon><span class="nav-text">Events</span>
+          </li>
+          <li [ngClass]="{ active: currentDash === 'create' }" (click)="navigateDash('create')" class="showSmall">
+            <fa-icon [icon]="icons.create"></fa-icon><span class="nav-text">Create</span>
+          </li>
+          <li [ngClass]="{ active: currentDash === 'reports' }" (click)="navigateDash('reports')">
+            <fa-icon [icon]="icons.reports"></fa-icon><span class="nav-text">Reports</span>
+          </li>
+          <li [ngClass]="{ active: currentDash === 'settings' }" (click)="navigateDash('settings')">
+            <fa-icon [icon]="icons.settings"></fa-icon><span class="nav-text">Settings</span>
+          </li>
+        </ul>
+        <button class="showBig full-width createButton" mat-raised-button (click)="navigateDash('create')"
+          color="primary">
+          <fa-icon [icon]="icons.create"></fa-icon><span class="nav-text">Create</span>
+        </button>
+        <!-- Popup creation or link-->
+      </nav>
 
-    <div class="mainContainer">
-      <div>
-        <h1>Event Admin Home</h1>
-      </div>
-
-      <div class="row" *ngIf="currentDash === 'home'">
-        <div class="grayBg">
-          <h4>
-            Messages
-          </h4>
-          TODO Basically a big todo list
+      <div class="mainContainer">
+        <div>
+          <h1>Event Admin Home</h1>
         </div>
-        <div class="grayBg" style="margin-top: 1rem;">
-          <h4>
-            Charts
-          </h4>
-          TODO Basic Charts with link to read more via reports page
+
+        <div class="row" *ngIf="currentDash === 'home'">
+          <div class="grayBg">
+            <h4>
+              Messages
+            </h4>
+            TODO Basically a big todo list
+          </div>
+          <div class="grayBg" style="margin-top: 1rem;">
+            <h4>
+              Charts
+            </h4>
+            TODO Basic Charts with link to read more via reports page
+          </div>
         </div>
-      </div>
-      <div class="row" *ngIf="currentDash === 'events'">
-        <div style="padding: 10px;">
-          <div class="grayBg" style="padding: 10px;">
-            <mat-card>
-              <div>
-                <!-- TODO Convert into a table with more functionality -->
-                <span style="font-size: 14px; display: inline-block;"
-                  >All events</span
-                >
-                <button
-                  mat-icon-button
-                  style="margin-left: auto; display: inline-block;"
-                  (click)="navigateDash('create')"
-                >
-                  <mat-icon>add_circle</mat-icon>
-                </button>
-                <button
-                  mat-icon-button
-                  (click)="d_s.getAllEventStats()"
-                  matTooltip="Refresh all feed"
-                >
-                  <mat-icon>refresh</mat-icon>
-                </button>
-              </div>
-              <mat-list
-                class="checkered-list"
-                *ngIf="events$ | async as events"
-              >
-                <mat-list-item
-                  *ngFor="let ev of events"
-                  style="border-bottom: 2px solid #f9f9f9;"
-                >
-                  <span
-                    mat-line
-                    (click)="ev.opened = ev.opened ? false : true"
-                    style="
+        <div class="row" *ngIf="currentDash === 'events'">
+          <div style="padding: 10px;">
+            <div class="grayBg" style="padding: 10px;">
+              <mat-card>
+                <div>
+                  <!-- TODO Convert into a table with more functionality -->
+                  <span style="font-size: 14px; display: inline-block;">All events</span>
+                  <button mat-icon-button style="margin-left: auto; display: inline-block;"
+                    (click)="navigateDash('create')">
+                    <mat-icon>add_circle</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="d_s.getAllEventStats()" matTooltip="Refresh all feed">
+                    <mat-icon>refresh</mat-icon>
+                  </button>
+                </div>
+                <mat-list class="checkered-list" *ngIf="events$ | async as events">
+                  <mat-list-item *ngFor="let ev of events" style="border-bottom: 2px solid #f9f9f9;">
+                    <span mat-line (click)="ev.opened = ev.opened ? false : true" style="
                       font-size: 11px;
                       text-overflow: ellipsis;
                       display: inline-block;
                       width: 150px;
                       pointer: cursor;
-                    "
-                    [ngStyle]="{ color: ev.active ? 'black' : 'red' }"
-                    >{{ ev.formal_name }}</span
-                  >
-                  <span style="margin-left: auto;">
-                    <!-- <mat-slide-toggle [checked]="ev.active"></mat-slide-toggle> -->
-                    <button mat-icon-button (click)="selectEvent(ev)">
-                      <mat-icon>chevron_right</mat-icon>
-                      <!-- TODO delete events, toggle visibility (perhaps popup) -->
-                    </button>
-                  </span>
-                  <p mat-line *ngIf="ev.opened" style="font-size: 10px;">
-                    Active:
-                    <mat-slide-toggle [checked]="ev.active"></mat-slide-toggle>
-                    <button matTooltip="Delete event" disabled mat-icon-button>
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </p>
-                </mat-list-item>
-              </mat-list>
-            </mat-card>
+                    " [ngStyle]="{ color: ev.active ? 'black' : 'red' }">{{ ev.formal_name }}</span>
+                    <span style="margin-left: auto;">
+                      <!-- <mat-slide-toggle [checked]="ev.active"></mat-slide-toggle> -->
+                      <button mat-icon-button (click)="selectEvent(ev)">
+                        <mat-icon>chevron_right</mat-icon>
+                        <!-- TODO delete events, toggle visibility (perhaps popup) -->
+                      </button>
+                    </span>
+                    <p mat-line *ngIf="ev.opened" style="font-size: 10px;">
+                      Active:
+                      <mat-slide-toggle [checked]="ev.active"></mat-slide-toggle>
+                      <button matTooltip="Delete event" disabled mat-icon-button>
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </p>
+                  </mat-list-item>
+                </mat-list>
+              </mat-card>
+            </div>
           </div>
-        </div>
 
-        <!-- TODO update this to be a component and popup -->
-        <div class="grayBg" style="padding: 10px;" *ngIf="event">
-          <h3>Event stats - {{ event.formal_name }}</h3>
-          <div *ngIf="currentStats">
-            <!-- <span style="font-size: 10px;">Last updated: {{currentStats.lastUpdate.toDate() | date:'short'}}</span> -->
-            <span style="font-size: 10px; display: inline-block;"
-              >Last updated: {{ currentStats.lastUpdate | date: "short" }}</span
-            >
-            <button
-              mat-icon-button
-              style="margin-left: auto; display: inline-block; font-size: 12px;"
-              (click)="forceUpdate(event.id)"
-            >
-              <mat-icon>refresh</mat-icon>
-            </button>
-            <div
-              style="display: flex; justify-content: center; flex-wrap: wrap;"
-            >
-              <div
-                style="
+          <!-- TODO update this to be a component and popup -->
+          <div class="grayBg" style="padding: 10px;" *ngIf="event">
+            <h3>Event stats - {{ event.formal_name }}</h3>
+            <div *ngIf="currentStats">
+              <!-- <span style="font-size: 10px;">Last updated: {{currentStats.lastUpdate.toDate() | date:'short'}}</span> -->
+              <span style="font-size: 10px; display: inline-block;">Last updated: {{ currentStats.lastUpdate | date:
+                "short" }}</span>
+              <button mat-icon-button style="margin-left: auto; display: inline-block; font-size: 12px;"
+                (click)="forceUpdate(event.id)">
+                <mat-icon>refresh</mat-icon>
+              </button>
+              <div style="display: flex; justify-content: center; flex-wrap: wrap;">
+                <div style="
                   width: 100px;
                   display: inline-block;
                   height: 100px;
                   margin: 5px;
-                "
-                class="text-center"
-              >
-                <h3>{{ currentStats.confessions.total }}</h3>
-                <p>Confessions</p>
-              </div>
-              <div
-                style="
+                " class="text-center">
+                  <h3>{{ currentStats.confessions.total }}</h3>
+                  <p>Confessions</p>
+                </div>
+                <div style="
                   width: 100px;
                   display: inline-block;
                   height: 100px;
                   margin: 5px;
-                "
-                class="text-center"
-              >
-                <h3>{{ currentStats.reactions.total }}</h3>
-                <p>Reactions</p>
-              </div>
-              <div
-                style="
+                " class="text-center">
+                  <h3>{{ currentStats.reactions.total }}</h3>
+                  <p>Reactions</p>
+                </div>
+                <div style="
                   width: 100px;
                   display: inline-block;
                   height: 100px;
                   margin: 5px;
-                "
-                class="text-center"
-              >
-                <h3>{{ currentStats.comments.total }}</h3>
-                <p>Comments</p>
-              </div>
-              <div
-                style="
+                " class="text-center">
+                  <h3>{{ currentStats.comments.total }}</h3>
+                  <p>Comments</p>
+                </div>
+                <div style="
                   width: 100px;
                   display: inline-block;
                   height: 100px;
                   margin: 5px;
-                "
-                class="text-center"
-              >
-                <h3>
-                  {{
+                " class="text-center">
+                  <h3>
+                    {{
                     currentStats.averages.acceptRate * 100 | number: "1.1-2"
-                  }}%
-                </h3>
-                <p>Accept Rate</p>
-              </div>
-              <div
-                style="
+                    }}%
+                  </h3>
+                  <p>Accept Rate</p>
+                </div>
+                <div style="
                   width: 100px;
                   display: inline-block;
                   height: 100px;
                   margin: 5px;
-                "
-                class="text-center"
-              >
-                <h3>{{ currentStats.averages.reactions | number: "1.1-2" }}</h3>
-                <p>Avg Reactions</p>
-              </div>
-              <div
-                style="
+                " class="text-center">
+                  <h3>{{ currentStats.averages.reactions | number: "1.1-2" }}</h3>
+                  <p>Avg Reactions</p>
+                </div>
+                <div style="
                   width: 100px;
                   display: inline-block;
                   height: 100px;
                   margin: 5px;
-                "
-                class="text-center"
-              >
-                <h3>{{ currentStats.averages.comments | number: "1.1-2" }}</h3>
-                <p>Avg Comments</p>
+                " class="text-center">
+                  <h3>{{ currentStats.averages.comments | number: "1.1-2" }}</h3>
+                  <p>Avg Comments</p>
+                </div>
               </div>
-            </div>
-            <div>
-              <mat-tab-group>
-                <mat-tab label="Pies">
-                  <canvas
-                    baseChart
-                    [data]="pieChartData"
-                    [labels]="pieChartLabels"
-                    chartType="pie"
-                    [options]="pieChartOptions"
-                    [plugins]="pieChartPlugins"
-                    [colors]="pieChartColors"
-                    legend="true"
-                  >
-                  </canvas>
-                </mat-tab>
-                <mat-tab label="Bar"></mat-tab>
-                <mat-tab label="Line"></mat-tab>
-              </mat-tab-group>
+              <div>
+                <mat-tab-group>
+                  <mat-tab label="Pies">
+                    <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" chartType="pie"
+                      [options]="pieChartOptions" [plugins]="pieChartPlugins" [colors]="pieChartColors" legend="true">
+                    </canvas>
+                  </mat-tab>
+                  <mat-tab label="Bar"></mat-tab>
+                  <mat-tab label="Line"></mat-tab>
+                </mat-tab-group>
+              </div>
             </div>
           </div>
-        </div>
-        <hr />
-        <div>
-          <h4>Send Email</h4>
-          <h5>Send automated email</h5>
-          Event | Email | Email template
+          <hr />
+          <div>
+            <h4>Send Email</h4>
+            <h5>Send automated email</h5>
+            Event | Email | Email template
+          </div>
+
+          <hr />
+          <div>
+            <h4>Email History</h4>
+            Shows which emails have been sent (i.e. automated)
+          </div>
         </div>
 
-        <hr />
-        <div>
-          <h4>Email History</h4>
-          Shows which emails have been sent (i.e. automated)
+        <div class="row" *ngIf="currentDash === 'create'">
+          <div>
+            <app-create-event formType="admin"></app-create-event>
+          </div>
+        </div>
+        <div class="row" *ngIf="currentDash === 'reports'">
+          <div>
+            <h4>Tables</h4>
+          </div>
+          <div>
+            Reports
+          </div>
+          <div>
+            <h4>Download Data</h4>
+            TODO Events, Configurations, Settings, Summaries
+          </div>
+        </div>
+        <div class="row" *ngIf="currentDash === 'settings'">
+          <div>
+            <h4>Edit data</h4>
+          </div>
+          <div>
+            <h4>Change admin password</h4>
+          </div>
         </div>
       </div>
-
-      <div class="row" *ngIf="currentDash === 'create'">
+      <aside class="sidebar">
+        <mat-form-field class="full-width searchBar">
+          <input matInput placeholder="Search Dashboard" />
+        </mat-form-field>
         <div>
-          <app-create-event formType="admin"></app-create-event>
+          <h3>Summaries</h3>
+          <app-admin-event-summary [summary]="allStats$"></app-admin-event-summary>
+          <mat-card>
+            Dashboard Chart Recent number of creations Chart of them
+            (multiselector)
+          </mat-card>
         </div>
-      </div>
-      <div class="row" *ngIf="currentDash === 'reports'">
-        <div>
-          <h4>Tables</h4>
-        </div>
-        <div>
-          Reports
-        </div>
-        <div>
-          <h4>Download Data</h4>
-          TODO Events, Configurations, Settings, Summaries
-        </div>
-      </div>
-      <div class="row" *ngIf="currentDash === 'settings'">
-        <div>
-          <h4>Edit data</h4>
-        </div>
-        <div>
-          <h4>Change admin password</h4>
-        </div>
-      </div>
+      </aside>
     </div>
-    <aside class="sidebar">
-      <mat-form-field class="full-width searchBar">
-        <input matInput placeholder="Search Dashboard" />
-      </mat-form-field>
-      <div>
-        <h3>Summaries</h3>
-        <app-admin-event-summary
-          [summary]="allStats$"
-        ></app-admin-event-summary>
-        <mat-card>
-          Dashboard Chart Recent number of creations Chart of them
-          (multiselector)
-        </mat-card>
-      </div>
-    </aside>
-  </div>
-  <router-outlet name="admin"></router-outlet>
-</div>
+    <router-outlet name="admin"></router-outlet>
+  </section>
+</article>

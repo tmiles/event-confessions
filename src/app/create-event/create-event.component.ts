@@ -49,62 +49,7 @@ export class CreateEventComponent implements OnInit {
   model: any = {};
   options: FormlyFormOptions = {};
   public adminPassword: string = "superAdminPassword";
-  fields: FormlyFieldConfig[] = [
-    {
-      key: "formal_name",
-      type: "input",
-      templateOptions: {
-        label: "Event Formal Name",
-        placeholder: "Event Name",
-        required: true,
-      },
-    },
-    {
-      key: "organization",
-      type: "input",
-      templateOptions: {
-        label: "Organization Name",
-        placeholder: "Organization Name",
-        required: true,
-      },
-    },
-    {
-      key: "id",
-      type: "input",
-      templateOptions: {
-        label: "URL",
-        placeholder: "Requested URL",
-        description: "This is what's going to appear in the address bar",
-        required: true,
-      },
-    },
-    {
-      key: "password",
-      type: "input",
-      templateOptions: {
-        label: "Attendee Password",
-        placeholder: "Attendee Password",
-        required: true,
-      },
-    },
-    {
-      key: "adminPassword",
-      type: "input",
-      templateOptions: {
-        label: "Admin Password",
-        placeholder: "Admin Password",
-        required: true,
-      },
-    },
-    {
-      key: "adminViewPassword",
-      type: "input",
-      templateOptions: {
-        label: "Admin View Only Password",
-        placeholder: "Admin View Only Password",
-      },
-    },
-  ];
+  fields: FormlyFieldConfig[] = null;
 
   constructor(private ds: DataService, private ans: AnalyticsService) {}
 
@@ -112,42 +57,48 @@ export class CreateEventComponent implements OnInit {
     if (this.formType === "admin") {
       // Allow updating
     } else if (this.formType === "public") {
-      this.fields.push({
-        key: "contactName",
-        type: "input",
-        templateOptions: {
-          required: true,
-          label: "Contact Name",
-          placeholder: "Contact Name",
-          description: "To contact you",
-        },
-      });
-      this.fields.push({
-        key: "contactEmail",
-        type: "input",
-        templateOptions: {
-          required: true,
-          label: "Contact Email",
-          placeholder: "Contact Email",
-          description: "To contact you",
-        },
-      });
-      this.fields.push({
-        key: "emailNotifications",
-        type: "checkbox",
-        defaultValue: false,
-        templateOptions: {
-          required: true,
-          label: "Moderation Email Notifications?",
-          description:
-            "Do you want to get email notifications on confessions moderation?",
-        },
-      });
+      this.fields = this.ds.createEventFields;
+      // this.fields.push({
+      //   key: "contactName",
+      //   type: "input",
+      //   templateOptions: {
+      //     required: true,
+      //     label: "Contact Name",
+      //     placeholder: "Contact Name",
+      //   },
+      // });
+      // this.fields.push({
+      //   key: "contactEmail",
+      //   type: "input",
+      //   templateOptions: {
+      //     required: true,
+      //     label: "Contact Email",
+      //     placeholder: "Contact Email",
+      //     description: "To contact you",
+      //   },
+      // });
+      // this.fields.push({
+      //   key: "emailNotifications",
+      //   type: "checkbox",
+      //   defaultValue: false,
+      //   templateOptions: {
+      //     required: true,
+      //     label: "Moderation Email Notifications?",
+      //     description:
+      //       "Do you want to get email notifications on confessions moderation?",
+      //   },
+      // });
     }
   }
 
-  // TODO ensure document doesn't already exist first
+  // TODO update this to generate id field
   async create() {
+    Swal.fire({
+      title: "Feature down",
+      text: "Feature down right now",
+      icon: "warning",
+    });
+    return null;
     if (!this.events) {
       this.events = this.ds.arrayToMap(
         await this.ds.getAllEvents(null).pipe(first()).toPromise()

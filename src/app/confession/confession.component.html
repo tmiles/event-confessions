@@ -1,14 +1,12 @@
 <mat-card *ngIf="confession" style="padding: 15px;" class="mat-elevation-z3">
   <mat-card-header style="margin: 0px;">
-    <mat-card-title
-      style="
+    <mat-card-title style="
         margin: 0px;
         width: 100%;
         display: flex;
         justify-content: space-between;
-      "
-    >
-      <strong style="font-size: 12pt;">{{ confession.to }}</strong>
+      ">
+      <h5 style="font-size: 12pt;">{{ confession.to }}</h5>
 
       <mat-menu #menu="matMenu">
         <!-- TODO share button -->
@@ -24,11 +22,7 @@
         </button> -->
 
         <!-- TODO create component to see the confession on it's own (perhaps in the center, no password required) -->
-        <button
-          style="font-size: 11px;"
-          mat-menu-item
-          (click)="reportConfession(confession)"
-        >
+        <button style="font-size: 11px;" mat-menu-item (click)="reportConfession(confession)">
           <mat-icon matTooltip="Report">report_problem</mat-icon>
           <span>Report</span>
         </button>
@@ -36,93 +30,62 @@
       <!-- TODO Ability to pin/star -->
     </mat-card-title>
     <mat-card-subtitle>
-      <span style="font-size: 12px;"
-        >from
+      <span style="font-size: 12px;">from
         <strong style="font-size: 13px;">{{
           confession.from ? confession.from : "Anonymous"
-        }}</strong>
+          }}</strong>
       </span>
     </mat-card-subtitle>
-    <button
-      mat-icon-button
-      [matMenuTriggerFor]="menu"
-      #trigger="matMenuTrigger"
-      aria-label="Confession management button"
-      style="margin-left: auto; margin-top: -10px;"
-    >
+    <button mat-icon-button [matMenuTriggerFor]="menu" #trigger="matMenuTrigger"
+      aria-label="Confession management button" style="margin-left: auto; margin-top: -10px;">
       <mat-icon>more_vert</mat-icon>
     </button>
   </mat-card-header>
   <mat-card-content style="padding: 0px 10px 5px 0px;">
     <p style="font-size: 12px;">{{ confession.message }}</p>
     <div *ngIf="confession.fileURL" style="margin-right: 20px;">
-      <img
-        style="max-width: 100%;"
-        *ngIf="showImage"
-        [src]="confession.fileURL"
-        (click)="showImage = !showImage"
-      />
+      <img style="max-width: 100%;" *ngIf="showImage" [src]="confession.fileURL" (click)="showImage = !showImage" />
       <span *ngIf="!showImage">
-        <button
-          mat-flat-button
-          color="primary"
-          (click)="showImage = !showImage"
-        >
-          Load Image</button
-        ><br />
+        <button mat-flat-button color="primary" (click)="showImage = !showImage">
+          Load Image</button><br />
       </span>
     </div>
   </mat-card-content>
   <mat-card-actions style="padding-bottom: 10px;">
     <div style="display: flex; justify-content: flex-start; padding: 5px 10px;">
-      <button
-        mat-icon-button
-        style="font-size: 13px;"
-        (click)="showReactions = !showReactions"
-      >
-        <mat-icon style="color: #0336ff; font-size: 14px;">tag_faces</mat-icon>
+      <button mat-icon-button style="font-size: 13px;" (click)="showReactions = !showReactions">
+        <mat-icon>tag_faces</mat-icon>
         {{ confession.score > 0 ? confession.score : "" }}
       </button>
-      <button
-        mat-icon-button
-        style="font-size: 13px;"
-        (click)="showComments = !showComments"
-      >
-        <mat-icon style="color: #0336ff; font-size: 14px;">message</mat-icon
-        >{{ confession.commentCount > 0 ? " " + confession.commentCount : "" }}
+      <button mat-icon-button style="font-size: 13px;" (click)="showComments = !showComments">
+        <mat-icon>message</mat-icon>{{ confession.commentCount > 0 ? " " +
+        confession.commentCount : "" }}
+      </button>
+      <button mat-icon-button matTooltip="Favorite" (click)="toggleFavoriteConfession(confession)">
+        <mat-icon>{{favorited? "favorite" : "favorite_border"}}</mat-icon>
       </button>
       <!-- <button mat-icon-button style="font-size: 13px;" disabled="true"><mat-icon style="font-size: 14px;">reply</mat-icon></button> -->
-      <span
-        style="
+      <span style="
           font-size: 8pt;
           display: inline-block;
           padding-top: 12px;
           margin-left: auto;
-        "
-      >
+        ">
         {{ confession.dateCreated | date: "short" }}
       </span>
     </div>
     <div *ngIf="showReactions">
       <mat-button-toggle-group class="mat-elevation-z0">
-        <mat-button-toggle
-          class="mat-elevation-z0"
-          style="
+        <mat-button-toggle class="mat-elevation-z0" style="
             width: 100%;
             min-height: 60px;
             padding-top: 5px;
             width: 25%;
             margin: 0px auto;
-          "
-          *ngFor="let val of reactionTypes"
-          [value]="val.data"
-          (click)="react(val.data)"
-        >
+          " *ngFor="let val of reactionTypes" [value]="val.data" (click)="react(val.data)">
           <i [class]="val.icon"></i>
-          <span
-            style="position: relative; left: 5px; bottom: 15px; font-size: 9px;"
-            >{{ confession.reaction[val.data] }}</span
-          >
+          <span style="position: relative; left: 5px; bottom: 15px; font-size: 9px;">{{ confession.reaction[val.data]
+            }}</span>
         </mat-button-toggle>
       </mat-button-toggle-group>
     </div>
@@ -166,19 +129,8 @@
     <div *ngIf="showComments" style="padding: 0px 10px;">
       <hr />
       <mat-form-field style="width: 90%; margin: 10px auto; font-size: 14px;">
-        <textarea
-          matInput
-          rows="4"
-          [(ngModel)]="commentMessage"
-          placeholder="Comment ..."
-        ></textarea>
-        <button
-          *ngIf="commentMessage"
-          matSuffix
-          mat-icon-button
-          aria-label="Clear"
-          (click)="comment()"
-        >
+        <textarea matInput rows="4" [(ngModel)]="commentMessage" placeholder="Comment ..."></textarea>
+        <button *ngIf="commentMessage" matSuffix mat-icon-button aria-label="Clear" (click)="comment()">
           <mat-icon>send</mat-icon>
         </button>
         <mat-hint align="start" *ngIf="sentComment">
@@ -187,15 +139,12 @@
       </mat-form-field>
       <div>
         <div *ngFor="let c of confession.comments">
-          <div
-            *ngIf="c.visible"
-            style="
+          <div *ngIf="c.visible" style="
               padding: 10px;
               border-radius: 5px;
               margin-bottom: 4px;
               background-color: rgb(236, 238, 239);
-            "
-          >
+            ">
             <p style="font-size: 12px;">{{ c.message }}</p>
             <p class="text-right" style="color: #999; font-size: 8px;">
               {{ c.dateCreated.toDate() | date: "short" }}

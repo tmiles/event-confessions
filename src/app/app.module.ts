@@ -46,13 +46,29 @@ import { AutosizeTextComponent } from "./autosize-text/autosize-text.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { MaterialModules } from "./core/core.module";
+import { DiscoverComponent } from "./discover/discover.component";
+import { EventCardComponent } from "./event-card/event-card.component";
+import { FeedComponent } from "./feed/feed.component";
+import { FeedbackComponent } from "./feedback/feedback.component";
+import { ConfessionCreateModalComponent } from "./confession-create-modal/confession-create-modal.component";
+import { KeysPipe } from "./keys.pipe";
+import { ObjectLengthPipe } from "./objectlength.pipe";
+import { ObjectContainsPipe } from "./objectcontains.pipe";
+import { IsFavoritedPipe } from "./isfavorited.pipe";
+import { FormlyFieldStepper } from "./stepper/stepper.component";
+import { CommonModule } from "@angular/common";
 
 const appRoutes: Routes = [
   {
     path: "infinite",
     component: InfiniteConfessionsComponent,
   },
-  { path: "", component: HomeComponent },
+  { path: "events", component: DiscoverComponent },
+  { path: "e", redirectTo: "/events", pathMatch: "full" },
+  { path: "home", component: HomeComponent },
+  { path: "create", component: CreateEventComponent },
+  { path: "feed", component: FeedComponent },
+  { path: "", redirectTo: "/home", pathMatch: "full" },
   {
     path: "admin",
     loadChildren: () =>
@@ -60,14 +76,26 @@ const appRoutes: Routes = [
         (m) => m.AdminDashboardModule
       ),
   },
-  { path: ":id/admin", component: AdminEventComponent },
-  { path: ":id", component: ConfessionsComponent },
+  { path: "events/:id/admin", component: AdminEventComponent },
+  { path: "events/:id", component: ConfessionsComponent },
+  { path: "e/:id/admin", component: AdminEventComponent },
+  { path: "e/:id", component: ConfessionsComponent },
 ];
+
+const PIPES = [
+  FilterPipe,
+  ArraySortPipe,
+  ObjectContainsPipe,
+  KeysPipe,
+  ObjectLengthPipe,
+  IsFavoritedPipe,
+];
+
+const ADMIN_COMPONENTS = [AdminEventComponent];
 
 @NgModule({
   declarations: [
     AppComponent,
-    AdminEventComponent,
     ConfessionsComponent,
     ConfessionComponent,
     CommentComponent,
@@ -77,18 +105,24 @@ const appRoutes: Routes = [
     InfiniteConfessionsComponent,
     ConfessionDialogComponent,
     ConfessionViewDialogComponent,
+    FormlyFieldStepper,
     CreateEventComponent,
     ConfessionCardComponent,
-    FilterPipe,
-    ArraySortPipe,
+    ADMIN_COMPONENTS,
+    PIPES,
     HomeComponent,
     AutosizeTextComponent,
+    DiscoverComponent,
+    EventCardComponent,
+    FeedComponent,
+    FeedbackComponent,
+    ConfessionCreateModalComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     InfiniteScrollModule,
-    RouterModule.forRoot(appRoutes, { relativeLinkResolution: 'legacy' }),
+    RouterModule.forRoot(appRoutes, { relativeLinkResolution: "legacy" }),
     ScrollingModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
@@ -107,6 +141,7 @@ const appRoutes: Routes = [
           component: AutosizeTextComponent,
           wrappers: ["form-field"],
         },
+        { name: "stepper", component: FormlyFieldStepper, wrappers: [] },
       ],
     }),
     FormlyMaterialModule,
@@ -125,11 +160,11 @@ const appRoutes: Routes = [
         allow_ad_personalization_signals: false,
         anonymize_ip: true,
         DEBUG_MODE: true,
-        APP_VERSION: "6.9.0",
+        APP_VERSION: "7.0.0",
       },
     },
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ConfessionDialogComponent],
+  entryComponents: [ConfessionDialogComponent, ConfessionCreateModalComponent],
 })
 export class AppModule {}

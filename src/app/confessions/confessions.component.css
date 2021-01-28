@@ -18,10 +18,17 @@ mat-card {
 }
 
 .confession-card {
-  width: 350px;
-  margin: 15px;
+  display: flex;
+  width: calc(100% / 3 - 20px);
+  margin: 10px;
+  justify-content: space-between;
 }
 
+@media screen and (max-width: 1100px) {
+  .confession-card {
+    width: calc(100% / 2 - 20px);
+  }
+}
 @media screen and (max-width: 768px) {
   .confession-card {
     width: 100%;
@@ -119,4 +126,87 @@ tr.example-element-row:not(.example-expanded-row):active {
 
 .example-element-description-attribution {
   opacity: 0.5;
+}
+
+div.bottomActionBar {
+  display: none;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  flex-direction: row;
+  justify-content: space-around;
+  background-color: var(--bg-dark-blue);
+  z-index: 100;
+}
+
+div.bottomActionBar > div {
+  flex: 1;
+  padding: 1rem 0px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+div.bottomActionBar > div:hover {
+  cursor: pointer;
+  background-color: var(--color-blue);
+  color: var(--bg-dark-blue);
+}
+
+div.bottomActions {
+  background-color: var(--color-blue);
+  position: fixed;
+  display: block;
+  width: 100%;
+  margin: 0px auto;
+  bottom: calc(3rem + 5px);
+  z-index: 100;
+  padding: 1rem 8px;
+  left: 0;
+}
+
+div#bottomFilters,
+div#bottomSearch {
+  margin: 0px auto;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+div.fab {
+  position: fixed;
+  z-index: 100;
+  bottom: 1.5rem;
+  right: 1rem;
+}
+
+@media only screen and (max-width: 800px) {
+  div.bottomActionBar {
+    display: flex;
+  }
+
+  div.fab {
+    display: none;
+  }
+}
+
+div.confessionBlock {
+  margin: 8px 0px;
+}
+
+span.circle-count {
+  background-color: #3f51b5;
+  padding: 4px;
+  border-radius: 50%;
+  margin: 0px 4px;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 80%;
+  font-family: "Roboto", sans-serif;
 }

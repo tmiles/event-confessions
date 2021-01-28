@@ -20,6 +20,7 @@ import { Confession } from "../types/types";
 import Swal from "sweetalert2";
 import { first } from "rxjs/operators";
 import { AnalyticsService } from "../services/analytics.service";
+import { ConfessionCreateModalComponent } from "../confession-create-modal/confession-create-modal.component";
 
 @Component({
   selector: "app-confessions",
@@ -44,13 +45,20 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
   expandedElement: any | null;
   searchField = null;
   searchFields = [["to"], ["from"], ["message"]];
-  form = new FormGroup({});
+  // form = new FormGroup({});
   loginModel: any = {};
   loggedIn = false;
   model: any = {};
   showConfirmation = false;
   sortField = "dateCreated";
   sortValue = "descending";
+  showBottomSearch: boolean = false;
+  showBottomFilters: boolean = false;
+  showPinned: boolean = true; /*Determine based off it have any favorited */
+  showAll: boolean = true;
+
+  showFavorited: boolean = true;
+  form = new FormGroup({});
 
   pending = false;
 
@@ -78,24 +86,26 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
 
   /* Confessions raw */
   confessions: any[] = null; // old system switch it out
+  favoritedConfessions: any = null;
+
+  favoritesFields: any[] = null;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild("myPond") myPond: any;
 
-  lastUploadedPhoto = null;
+  // lastUploadedPhoto = null;
 
-  pondOptions = {
-    class: "my-filepond",
-    multiple: false,
-    labelIdle: "Drop files here",
-    allowFileSizeValidation: true,
-    maxFileSize: 10000000,
-    // allowImageValidateSize: true,
-    // imageValidateSizeMaxWidth: 10000,
-    // imageValidateSizeMaxHeight: 10000,
-    acceptedFileTypes: "image/jpeg, image/png, image/gif",
-  };
+  // pondOptions = {
+  //   class: "my-filepond",
+  //   multiple: false,
+  //   labelIdle: "Drop files here",
+  //   allowFileSizeValidation: true,
+  //   maxFileSize: 10000000,
+  //   // allowImageValidateSize: true,
+  //   // imageValidateSizeMaxWidth: 10000,
+  //   // imageValidateSizeMaxHeight: 10000,
+  //   acceptedFileTypes: "image/jpeg, image/png, image/gif",
+  // };
 
   // pondFiles = [
   //   'index.html'
@@ -111,8 +121,8 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
     this.ans.logEvent("loaded", { loaded: true });
   }
 
-  ngOnInit() {
-    this.route.params.subscribe((params) => {
+  async ngOnInit() {
+    this.route.params.subscribe(async (params) => {
       // todo load the correct event
       this.eventID = params["id"];
       // this.analytics.updateConfig({ DEBUG_MODE: true });
@@ -122,7 +132,7 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
         .getEvent(this.eventID)
         .pipe(first())
         .toPromise()
-        .then((res) => {
+        .then(async (res) => {
           if (!res) {
             Swal.fire({
               icon: "error",
@@ -143,11 +153,12 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
             this.loggedIn = true; // bypass security
           }
           this.fetchData();
+          await this.getFavoritedConfessions();
         });
     });
   }
 
-  checkPass() {
+  checkPass(): boolean {
     if (this.loginModel.pass === this.event.password) {
       this.loggedIn = true;
       return this.d_s.assignLocalPass(this.eventID);
@@ -156,20 +167,27 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
     return false;
   }
 
+  async getFavoritedConfessions(): Promise<void> {
+    let results = await this.d_s.getEventFavoritedConfessions(this.eventID);
+    this.favoritedConfessions = results;
+    this.favoritesFields = [["id"], this.favoritedConfessions];
+    return Promise.resolve();
+  }
+
   /* File Upload */
   // pondHandleInit() {
   //   console.log("FilePond has initialised", this.myPond);
   // }
 
-  async pondHandleAddFile(event: any) {
-    if (event) {
-      this.lastUploadedPhoto = this.myPond.getFile();
-    }
-  }
+  // async pondHandleAddFile(event: any) {
+  //   if (event) {
+  //     this.lastUploadedPhoto = this.myPond.getFile();
+  //   }
+  // }
 
-  async pondHandleRemoveFile(event: any) {
-    this.lastUploadedPhoto = null;
-  }
+  // async pondHandleRemoveFile(event: any) {
+  //   this.lastUploadedPhoto = null;
+  // }
 
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -208,6 +226,18 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
     });
   }
 
+  createConfession(): void {
+    console.log("Opening");
+    const dialogRef = this.dialog.open(ConfessionCreateModalComponent, {
+      width: "750px",
+      data: {
+        eventID: this.eventID,
+        model: this.model,
+        submitForm: this.event.submitForm,
+      },
+    });
+  }
+
   openDialog(confession): void {
     console.log(confession);
     // const dialogRef = this.dialog.open(ConfessionDialogComponent, {
@@ -216,45 +246,45 @@ export class ConfessionsComponent implements OnInit, AfterViewInit {
     // });
   }
 
-  submit() {
-    this.pending = true;
-    // let id =
-    const data: Confession = {
-      dateApproved: null,
-      dateCreated: new Date(),
-      from: this.model.from,
-      to: this.model.to,
-      message: this.model.message,
-      score: 0,
-      reaction: {
-        heart: 0,
-        sad: 0,
-        smile: 0,
-        thumbs: 0,
-      },
-      id: null,
-      visible: false,
-      comments: [],
-      commentCount: 0,
-      commentPending: 0,
-      status: "Pending Approval",
-    };
-    this.d_s
-      .createConfession(this.eventID, data, null, this.lastUploadedPhoto)
-      .then(() => {
-        this.myPond.removeFiles();
-        // this.showConfirmation = true;
-        this.model = {};
-        // TODO check if have any email sends, if so send email
-        Swal.fire({
-          title: "Submitted",
-          text: "Submitted confession, pending admin approval",
-          icon: "success",
-        });
-        this.pending = false;
-        // clear image
-      });
-  }
+  // submit() {
+  //   this.pending = true;
+  //   // let id =
+  //   const data: Confession = {
+  //     dateApproved: null,
+  //     dateCreated: new Date(),
+  //     from: this.model.from,
+  //     to: this.model.to,
+  //     message: this.model.message,
+  //     score: 0,
+  //     reaction: {
+  //       heart: 0,
+  //       sad: 0,
+  //       smile: 0,
+  //       thumbs: 0,
+  //     },
+  //     id: null,
+  //     visible: false,
+  //     comments: [],
+  //     commentCount: 0,
+  //     commentPending: 0,
+  //     status: "Pending Approval",
+  //   };
+  //   this.d_s
+  //     .createConfession(this.eventID, data, null, this.lastUploadedPhoto)
+  //     .then(() => {
+  //       this.myPond.removeFiles();
+  //       // this.showConfirmation = true;
+  //       this.model = {};
+  //       // TODO check if have any email sends, if so send email
+  //       Swal.fire({
+  //         title: "Submitted",
+  //         text: "Submitted confession, pending admin approval",
+  //         icon: "success",
+  //       });
+  //       this.pending = false;
+  //       // clear image
+  //     });
+  // }
 
   trackByFn(index, item) {
     return item.id; // unique id corresponding to the item

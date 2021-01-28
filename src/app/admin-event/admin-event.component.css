@@ -9,3 +9,65 @@ ng-container {
 .alert {
   color: red;
 }
+
+.grayBg {
+  background-color: #f1f1f1;
+}
+
+div.mainContainer {
+  border-left: 1px solid var(--border-gray);
+  border-right: 1px solid var(--border-gray);
+}
+
+@media screen and (max-width: 600px) {
+  div.mainContainer {
+    border: none;
+    width: 100%;
+  }
+}
+
+button.createButton {
+  display: flex;
+  justify-content: space-around;
+}
+
+@media screen and (min-width: 768px) {
+  button.createButton .ng-fa-icon {
+    display: none;
+  }
+}
+@media screen and (max-width: 768px) {
+  button.createButton span.nav-text {
+    display: none;
+  }
+}
+
+.sidebar .flex.flex-row {
+  align-items: flex-start;
+}
+
+.statistic {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  margin: 8px 0px;
+}
+
+.statistic span.number {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+@media only screen and (min-width: 768px) {
+  .sidebar .flex .statistic {
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .sidebar .flex .statistic {
+    width: calc(100% / 3 - 20px);
+    justify-content: space-evenly;
+  }
+}

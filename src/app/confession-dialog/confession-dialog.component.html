@@ -1,156 +1,102 @@
-<div
-  md-dialog-content
-  *ngIf="confession"
-  style="max-height: 450px; padding: 5px;"
->
-  <h1 style="color: red; margin-top: 5px" *ngIf="confession.reportCount > 0">
-    REPORTED: {{ confession.reportCount }} times
-  </h1>
-  <mat-card class="mat-elevation-z3 animated">
-    <mat-card-header>
-      <mat-card-title>
-        <strong style="font-size: 12pt;">{{ confession.to }}</strong>
-      </mat-card-title>
-      <mat-card-subtitle>
-        <span *ngIf="confession.from" style="font-size: 12pt;"
-          >from
+<ng-container *ngIf="confession" style="max-height: 90vh; width: 85vw; max-width: 750px;">
+  <div class="flex flex-row ">
+    <div class="col2">
+      <h1 style="color: red; margin-top: 5px" *ngIf="confession.reportCount > 0">
+        REPORTED: {{ confession.reportCount }} times
+      </h1>
+      <h2>{{confession.to}}</h2>
+      <div class="subtext"><span *ngIf="confession.from" style="font-size: 12pt;">from
           <strong>{{ confession.from }}</strong>
         </span>
-      </mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content
-      style="min-height: 60px; padding: 0px 10px 20px 10px; max-height: 400px; overflow-y: scroll"
-    >
-      <div *ngIf="confession.fileURL" style="margin-right: 20px">
-        <img
-          style="max-width: 100%"
-          *ngIf="showImage"
-          [src]="confession.fileURL"
-          (click)="showImage = !showImage"
-        />
-        <span *ngIf="!showImage">
-          <button
-            mat-flat-button
-            color="primary"
-            (click)="showImage = !showImage"
-          >
-            Load Image</button
-          ><br />
-        </span>
       </div>
-      <p style="font-size: 12pt;">
-        {{ confession.message }}
-      </p>
-    </mat-card-content>
-    <mat-card-actions class="row">
-      <div class="col-sm-3 text-center">
-        <button
-          mat-raised-button
-          color="warn"
-          [disabled]="auth === 'view'"
-          (click)="moderateConfession(confession.id, false)"
-        >
+      <div style="min-height: 60px; max-height: 400px; overflow-y: scroll">
+        <p class="txt-roboto" style="margin: 8px 0px;">
+          {{ confession.message }}
+        </p>
+        <ng-container *ngIf="confession.fileURL">
+          <img style="max-width: 100%" *ngIf="showImage" [src]="confession.fileURL" (click)="showImage = !showImage" />
+          <span *ngIf="!showImage">
+            <button mat-flat-button color="primary" (click)="showImage = !showImage">
+              Load Image</button><br />
+          </span>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col2 bg-gray" style="padding: 1rem;">
+      <h3>Confession Data</h3>
+      <p class="subtext">Create date: {{ confession.dateCreated | date: "short" }}</p>
+      <mat-button-toggle-group class="mat-elevation-z0">
+        <mat-button-toggle disabled="true" class="mat-elevation-z0"
+          style="width: 100%; min-height: 80px; padding-top: 25px; width: 25%; margin: 0px auto;"
+          *ngFor="let val of reactionTypes" [value]="val.data">
+          <i [class]="val.icon"></i>
+          <span style="position: relative; left: 5px; bottom: 15px; font-size: 10px">{{ confession.reaction[val.data]
+            }}</span>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+      <h3>Moderate</h3>
+      <div class="flex">
+        <button mat-raised-button color="warn" [disabled]="auth === 'view'"
+          (click)="moderateConfession(confession.id, false)">
           <span *ngIf="confession.visible">Disprove</span>
-          <span *ngIf="!confession.visible">DENY</span>
+          <span *ngIf="!confession.visible">Deny</span>
         </button>
-        <button
-          mat-raised-button
-          color="accent"
-          *ngIf="!confession.visible"
-          [disabled]="auth === 'view'"
-          (click)="moderateConfession(confession.id, true)"
-        >
+        <button mat-raised-button color="accent" *ngIf="!confession.visible" [disabled]="auth === 'view'"
+          (click)="moderateConfession(confession.id, true)">
           Approve
         </button>
       </div>
-      <div class="col-sm-3 text-center">
-        <p style="font-size: 12pt">
-          {{ confession.dateCreated | date: "short" }}
-        </p>
-      </div>
-      <div class="col-sm-6">
-        <mat-button-toggle-group class="mat-elevation-z0">
-          <mat-button-toggle
-            disabled="true"
-            class="mat-elevation-z0"
-            style="width: 100%; min-height: 80px; padding-top: 25px; width: 25%; margin: 0px auto;"
-            *ngFor="let val of reactionTypes"
-            [value]="val.data"
-          >
-            <i [class]="val.icon"></i>
-            <span
-              style="position: relative; left: 5px; bottom: 15px; font-size: 10px"
-              >{{ confession.reaction[val.data] }}</span
-            >
-          </mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
-    </mat-card-actions>
-  </mat-card>
 
-  <mat-card *ngIf="comments" style="margin-bottom: 20px;">
-    <mat-card-title>
-      <h4>Comments</h4>
-    </mat-card-title>
-    <mat-card-content>
-      <div *ngIf="pending.length > 0">
-        <h5>Pending</h5>
-        <div
-          class="row"
-          style="padding-left: 20px"
-          *ngFor="let comment of pending"
-        >
-          <p class="col-sm-10" style="font-weight: bold; max-height: 250px">
-            {{ comment.message }}
-          </p>
-          <div class="col-sm-2">
-            <button
-              mat-raised-button
-              color="primary"
-              [disabled]="auth === 'view'"
-              (click)="moderateComment(comment.id, true)"
-            >
-              Approve
-            </button>
-            <br />
-            <button
-              mat-raised-button
-              color="warn"
-              [disabled]="auth === 'view'"
-              (click)="moderateComment(comment.id, false)"
-            >
-              Block
-            </button>
+    </div>
+    <div style="width: 100%;">
+      <h3>Comments</h3>
+      <mat-accordion>
+        <mat-expansion-panel *ngIf="pending.length > 0">
+          <mat-expansion-panel-header>Pending Comments</mat-expansion-panel-header>
+          <div class="flex flex-row col1-3 bg-gray" style="padding: 1rem; margin: 8px 0px; "
+            *ngFor="let comment of pending">
+            <div>
+              <p>
+                {{ comment.message }}
+              </p>
+              <p class="subtext">
+                {{ comment.dateCreated.toDate() | date: "short" }}
+              </p>
+            </div>
+            <div class="text-right">
+              <button mat-raised-button color="primary" [disabled]="auth === 'view'"
+                (click)="moderateComment(comment.id, true)">
+                Approve
+              </button>
+              <br />
+              <button mat-raised-button color="warn" [disabled]="auth === 'view'"
+                (click)="moderateComment(comment.id, false)">
+                Block
+              </button>
+            </div>
           </div>
-          <p class="col-sm-6">
-            {{ comment.dateCreated.toDate() | date: "short" }}
-          </p>
-        </div>
-      </div>
-      <div *ngIf="approved.length > 0">
-        <h5>Approved Comments</h5>
-        <div
-          class="row"
-          style="padding-left: 20px; max-height: 200px"
-          *ngFor="let comment of approved"
-        >
-          <p class="col-sm-10" style="font-weight: bold;">
-            {{ comment.message }}
-          </p>
-          <button
-            class="col-sm-2"
-            mat-raised-button
-            color="warn"
-            [disabled]="auth === 'view'"
-            (click)="moderateComment(comment.id, false)"
-          >
-            Block
-          </button>
-          <p class="col-sm-6">
-            {{ comment.dateCreated.toDate() | date: "short" }}
-          </p>
-        </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
-</div>
+        </mat-expansion-panel>
+        <mat-expansion-panel *ngIf="approved.length > 0">
+          <mat-expansion-panel-header>Approved Comments</mat-expansion-panel-header>
+          <div class="flex flex-row col1-3 bg-gray" style="padding: 1rem; margin: 8px 0px; "
+            *ngFor="let comment of approved">
+            <div>
+              <p>
+                {{ comment.message }}
+              </p>
+              <p class="subtext">
+                {{ comment.dateCreated.toDate() | date: "short" }}
+              </p>
+            </div>
+            <div class="text-right">
+              <button mat-raised-button color="warn" [disabled]="auth === 'view'"
+                (click)="moderateComment(comment.id, false)">
+                Block
+              </button>
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </div>
+</ng-container>

@@ -11,8 +11,14 @@ mat-card {
   --color-gray: #e6ecf0;
   --color-blue: #1da1f2;
   --color-light-blue: #1da1f21c;
+  --bg-dark-blue: #222433;
+  --color-dark-blue: #989cbb;
   --border-gray: #e6ecf0;
   --bg-secondary: #e6ecf0;
+}
+
+.bg-gray {
+  background-color: var(--bg-secondary);
 }
 
 .row {
@@ -24,7 +30,22 @@ body {
 }
 body {
   margin: 0;
-  font-family: "Roboto", sans-serif;
+  font-family: "Righteous", sans-serif;
+  color: var(--color-dark-blue);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Viga", sans-serif;
+  color: var(--bg-dark-blue);
+}
+
+p {
+  font-weight: 100;
 }
 
 .mat-card-header-text {
@@ -47,6 +68,10 @@ body {
   border-radius: 100px;
   padding: 0px 1rem;
   background-color: var(--color-gray);
+}
+
+.txt-roboto {
+  font-family: "Roboto", sans-serif;
 }
 
 /** Dashboard **/
@@ -129,6 +154,8 @@ nav ul li.active svg path {
     left: 0px;
     align-items: center;
     border-top: 1px solid var(--border-gray);
+    background-color: white;
+    z-index: 100;
   }
 
   nav.nav ul {
@@ -161,6 +188,71 @@ nav ul li.active svg path {
   justify-content: center;
 }
 
+.flex.flex-vertical-center {
+  align-items: center;
+}
+
+.flex-spaced {
+  justify-content: space-between;
+}
+
+.flex .col3 {
+  width: calc(100% / 3 - 40px);
+}
+
+.flex .col2 {
+  width: calc(100% / 2 - 20px);
+  margin: 10px;
+}
+
+.flex.col1-3 > div:nth-of-type(1) {
+  width: calc(100% * 2 / 3 - 20px);
+}
+
+.flex.col1-3 > div:nth-of-type(2) {
+  width: calc(100% * 1 / 3 - 20px);
+}
+
+@media only screen and (max-width: 800px) {
+  .flex .col2,
+  .flex .col3 {
+    width: 100%;
+  }
+}
+
+.subtext {
+  color: #999;
+  font-size: 90%;
+}
+
+.hover-pointer:hover {
+  cursor: pointer;
+}
+
+.divider {
+  border-top: 1px solid #999;
+}
+
+.max {
+  max-width: 900px;
+  margin: 0px auto;
+}
+
+section {
+  margin: 24px 0px;
+  padding: 2rem;
+}
+
+@media only screen and (max-width: 900px) {
+  .max {
+    width: calc(100% - 2rem);
+  }
+
+  section {
+    padding: 2rem 0.5rem;
+  }
+}
+
 /* Sidebar */
 aside.sidebar {
   width: 12rem;
@@ -173,11 +265,13 @@ div.dashboardPage div.mainContainer {
 }
 
 @media screen and (max-width: 768px) {
-  aside.sidebar {
-    display: none;
+  div.dashboardPage {
+    flex-direction: column-reverse;
   }
+  div.dashboardPage aside.sidebar,
   div.dashboardPage div.mainContainer {
-    width: calc(100% - 3rem);
+    width: 100%;
+    margin-bottom: 2rem;
   }
 }
 
@@ -198,4 +292,8 @@ div.dashboardPage div.mainContainer {
   .showBig {
     display: none;
   }
+}
+
+article {
+  margin: 3rem 0px;
 }

@@ -10,6 +10,18 @@ import { MatTableDataSource } from "@angular/material/table";
 import { ConfessionDialogComponent } from "../confession-dialog/confession-dialog.component";
 import Swal from "sweetalert2";
 import { first } from "rxjs/operators";
+import {
+  faHome,
+  faPlusCircle,
+  faFileDownload,
+  faEnvelopeOpenText,
+  faComments,
+  faCogs,
+} from "@fortawesome/free-solid-svg-icons";
+import { faClock, faChartBar } from "@fortawesome/free-regular-svg-icons";
+import { ChartOptions } from "chart.js";
+import { Label } from "ng2-charts";
+import { Observable } from "rxjs";
 
 @Component({
   selector: "app-event-admin",
@@ -17,10 +29,22 @@ import { first } from "rxjs/operators";
   styleUrls: ["./admin-event.component.css"],
 })
 export class AdminEventComponent implements OnInit, AfterViewInit {
+  icons = {
+    home: faHome,
+    pending: faClock,
+    create: faPlusCircle,
+    reports: faChartBar,
+    export: faFileDownload,
+    email: faEnvelopeOpenText,
+    events: faComments,
+    settings: faCogs,
+  };
   form = new FormGroup({});
   model: any = {};
   loginModel = null;
   authenticated: string = "";
+
+  currentDash: string = "home";
 
   options: FormlyFormOptions = {};
   fields: FormlyFieldConfig[] = [
@@ -39,11 +63,47 @@ export class AdminEventComponent implements OnInit, AfterViewInit {
   event = null;
   sub = null;
   subscription = null;
+
+  currentStats: any = null;
   /* Table items */
-  displayedColumns = ["dateCreated", "to", "status", "manage"];
+  displayedColumns = ["dateCreated", "to", "status"];
   dataSource: MatTableDataSource<any>;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild("paginator") paginator: MatPaginator;
+  allConfessions: any = null;
+  liveAnalytics: any = {};
+  // Pies
+  public pieChartOptions: ChartOptions = {
+    responsive: true,
+    legend: {
+      position: "top",
+    },
+  };
+  public pieChartLabels: Label[] = ["Hearts", "Smiles", "Sad", "Thumbs"];
+  public pieChartData: number[] = [0, 0, 0, 0];
+  public pieChartColors = [
+    {
+      backgroundColor: [
+        "rgba(255,0,0,0.3)",
+        "rgba(0,255,0,0.3)",
+        "rgba(0,0,255,0.3)",
+      ],
+    },
+  ];
+
+  adminHelp$: Observable<{
+    articles: { title: string; html: string }[];
+  }> = null;
+
+  // Forms
+  passwordForm = new FormGroup({});
+  passwordFields = [{}];
+  passwordsModel = [{}];
+
+  eventForm = new FormGroup({});
+  eventFields = [{}];
+  eventModel = [{}];
+
   // matPaginator
 
   // private paginator: MatPaginator;
@@ -89,26 +149,46 @@ export class AdminEventComponent implements OnInit, AfterViewInit {
             });
           }
           this.event = res;
+          this.adminHelp$ = this.d_s.getDocument("configs/admin-help");
+
+          this.initializeForms();
           if (this.d_s.checkLocalPass(this.eventID + "-admin")) {
             // If logged in within 2 days
             this.authenticated = "edit";
           }
         });
-      // this.subscription = this.d_s.getConfessionsAdmin(this.eventID, null, 'status').subscribe(res => {
-      //   //   this.dataSource = new MatTableDataSource(res);
-      //   // }
-
-      //   this.dataSource.data = res;
-      //   this.loaded = true;
-      //   this.dataSource.paginator = this.paginator;
-      //   this.applyFilter('');
-      //   // setTimeout(() => {
-      //   //   this.dataSource.paginator = this.paginator; console.log('Complete');
-      //   // }, 2000);
-      //   this.dataSource.sort = this.sort;
-      //   // console.log('Sorted');
-      // });
       this.fetchData();
+    });
+  }
+
+  initializeForms() {
+    let formFields = this.d_s.createEventFields;
+    this.passwordFields = [
+      formFields[0].fieldGroup[1].fieldGroup[0],
+      formFields[0].fieldGroup[1].fieldGroup[1],
+      formFields[0].fieldGroup[1].fieldGroup[2],
+    ];
+    this.eventFields = [
+      formFields[0].fieldGroup[0].fieldGroup[0],
+      formFields[0].fieldGroup[0].fieldGroup[1],
+      formFields[0].fieldGroup[2].fieldGroup[0],
+      formFields[0].fieldGroup[2].fieldGroup[1],
+    ];
+    this.passwordsModel = this.eventModel = this.event;
+  }
+
+  navigateDash(dashName: string) {
+    this.currentDash = dashName;
+    // TODO render out new content (might just be in the template tbh)
+  }
+
+  updateEvent() {
+    this.d_s.createEvent(this.event.id, this.event).then(() => {
+      Swal.fire({
+        title: "Updated",
+        text: "Event details have been updated!",
+        icon: "success",
+      });
     });
   }
 
@@ -144,6 +224,7 @@ export class AdminEventComponent implements OnInit, AfterViewInit {
     this.subscription = this.d_s
       .getConfessions(this.eventID, null)
       .subscribe((res) => {
+        this.liveAnalytics = this.calculateLiveAnalytics(res);
         this.dataSource = new MatTableDataSource(res);
         this.dataSource.paginator = this.paginator;
         // this.dataSource.paginator.firstPage();
@@ -189,5 +270,42 @@ export class AdminEventComponent implements OnInit, AfterViewInit {
 
   trackByFn(index, item) {
     return item.id; // unique id corresponding to the item
+  }
+
+  calculateLiveAnalytics(allData) {
+    let analytics = {
+      total: allData.length,
+      totalApproved: 0,
+      totalRejected: 0,
+      totalPending: 0,
+      totalReported: 0,
+      totalComments: 0,
+      totalReactions: 0,
+      dayApproved: 0,
+      dayRejected: 0,
+      dayPending: 0,
+      dayReported: 0,
+      dayComments: 0,
+      dayReactions: 0,
+    };
+    allData.forEach((el) => {
+      if (el.status.toLowerCase() === "pending approval") {
+        // Do day check
+        this.liveAnalytics.totalPending++;
+      } else if (el.status.toLowerCase() === "not approved") {
+        // Do day check
+        this.liveAnalytics.totalRejected++;
+      } else {
+        if (el.dateApproved) {
+          // Do day check
+          this.liveAnalytics.totalApproved++;
+        }
+      }
+      if (el.reportCount > 0) {
+        // Do day check
+        this.liveAnalytics.totalReported++;
+      }
+    });
+    return analytics;
   }
 }

@@ -4,15 +4,151 @@ import { Observable } from "rxjs";
 import { map, tap, first, finalize } from "rxjs/operators";
 import { Confession, Comment } from "../types/types";
 import { AngularFireStorage } from "@angular/fire/storage";
+import { FormlyFieldConfig } from "@ngx-formly/core";
 
 @Injectable({
   providedIn: "root",
 })
 export class DataService {
-  public versionNumber = "6.9.0";
+  public versionNumber = "7.0.0";
   public recent: Observable<Confession[]> = null;
   public all: Observable<Confession[]> = null;
+  public createEventFields: FormlyFieldConfig[] = [
+    {
+      type: "stepper",
+      fieldGroup: [
+        {
+          templateOptions: { label: "Details" },
+          fieldGroup: [
+            {
+              key: "formal_name",
+              type: "input",
+              templateOptions: {
+                label: "Event Formal Name",
+                placeholder: "Event Name",
+                required: true,
+              },
+            },
+            {
+              key: "organization",
+              type: "input",
+              templateOptions: {
+                label: "Organization Name",
+                placeholder: "Organization Name",
+                required: true,
+              },
+            },
+          ],
+        },
+        {
+          templateOptions: { label: "Passwords" },
+          fieldGroup: [
+            {
+              key: "password",
+              type: "input",
+              templateOptions: {
+                label: "Attendee Password",
+                placeholder: "Attendee Password",
+                required: true,
+              },
+            },
+            {
+              key: "adminPassword",
+              type: "input",
+              templateOptions: {
+                label: "Admin Password",
+                placeholder: "Admin Password",
+                required: true,
+              },
+            },
+            {
+              key: "adminViewPassword",
+              type: "input",
+              templateOptions: {
+                label: "Admin View Only Password",
+                placeholder: "Admin View Only Password",
+              },
+            },
+          ],
+        },
+        {
+          templateOptions: { label: "Details" },
+          fieldGroup: [
+            {
+              key: "description",
+              type: "textarea-auto-resize",
+              templateOptions: {
+                rows: 3,
+                required: true,
+                label: "Event Description",
+                placeholder: "Event Description",
+                description: "Describe this event",
+              },
+            },
+            {
+              key: "communityRules",
+              type: "textarea-auto-resize",
+              templateOptions: {
+                rows: 3,
+                label: "Community Rules",
+                placeholder: "Community Rules",
+                description: "You can edit this later",
+              },
+            },
+          ],
+        },
+        {
+          templateOptions: { label: "Contact info" },
+          fieldGroup: [
+            {
+              key: "contactName",
+              type: "input",
+              templateOptions: {
+                required: true,
+                label: "Contact Name",
+                placeholder: "Contact Name",
+              },
+            },
+            {
+              key: "contactEmail",
+              type: "input",
+              templateOptions: {
+                required: true,
+                label: "Contact Email",
+                placeholder: "Contact Email",
+                description: "To contact you",
+              },
+            },
+            {
+              key: "emailNotifications",
+              type: "checkbox",
+              defaultValue: false,
+              templateOptions: {
+                required: true,
+                label: "Moderation Email Notifications?",
+                description:
+                  "Do you want to get email notifications on confessions moderation?",
+              },
+            },
+          ],
+        },
+      ],
+    },
+  ];
 
+  //   {
+  //     key: "id",
+  //     type: "input",
+  //     templateOptions: {
+  //       label: "URL",
+  //       placeholder: "Requested URL",
+  //       description: "This is what's going to appear in the address bar",
+  //       required: true,
+  //     },
+  //   },
+
+  //   ,
+  // ];
   constructor(
     private db: AngularFirestore,
     private afstore: AngularFireStorage
@@ -54,6 +190,10 @@ export class DataService {
       check = check || attributeValue;
     });
     return check;
+  }
+
+  getDocument(pathID: string): Observable<any> {
+    return this.db.doc(pathID).valueChanges();
   }
 
   async createEvent(eventID: string, data: any) {
@@ -111,6 +251,33 @@ export class DataService {
           return Promise.resolve(`Created eventID: ${eventID}`);
         });
     }
+  }
+
+  ifFavorited(eventID: string, confessionID: string): any {
+    const dat = JSON.parse(localStorage.getItem("event-confessions"));
+    return dat && dat[eventID] && dat[eventID][confessionID]
+      ? dat[eventID][confessionID]
+      : null;
+  }
+
+  // getEventFavoritedConfessions(eventID: string): any[] {
+  //   const dat = JSON.parse(localStorage.getItem("event-confessions"));
+  //   if (!dat || !dat[eventID]) {
+  //     return null;
+  //   }
+  //   let arr = [];
+  //   Object.keys(dat).forEach((el) => {
+  //     arr.push({ id: el, date: dat[el] });
+  //   });
+  //   console.log(arr);
+  //   return arr;
+  // }
+
+  async getEventFavoritedConfessions(eventID: string): Promise<any> {
+    const dat = JSON.parse(localStorage.getItem("event-confessions"));
+    return !dat || !dat[eventID]
+      ? Promise.resolve(null)
+      : Promise.resolve(dat[eventID]);
   }
 
   async createConfession(
@@ -730,13 +897,49 @@ export class DataService {
       });
   }
 
+  async toggleFavoriteConfession(
+    eventID: string,
+    confession: any
+  ): Promise<boolean> {
+    const eventConfessionsData = JSON.parse(
+      localStorage.getItem("event-confessions")
+    );
+    let eventData = eventConfessionsData ? eventConfessionsData[eventID] : null;
+    if (eventData) {
+      if (eventData[confession["id"]]) {
+        // Removing favorite
+        delete eventData[confession["id"]];
+        localStorage.setItem(
+          "event-confessions",
+          JSON.stringify(eventConfessionsData)
+        );
+        return Promise.resolve(false);
+      }
+      eventData[confession["id"]] = new Date();
+      localStorage.setItem(
+        "event-confessions",
+        JSON.stringify(eventConfessionsData)
+      );
+      return Promise.resolve(true);
+    } else {
+      // First event entry
+      let newData = { ...eventConfessionsData }; // assigns any data
+      newData[eventID] = { ...newData[eventID] };
+      newData[eventID][confession["id"]] = new Date();
+      localStorage.setItem("event-confessions", JSON.stringify(newData));
+      return Promise.resolve(true);
+    }
+
+    // localStorage.setItem(confession.id, JSON.stringify(voteType));
+  }
+
   async summarizeData(eventID: string) {
     let confessions = await this.db
       .collection(`events/${eventID}/confessions`)
       .get()
       .pipe(first())
       .toPromise();
-    let data : any = {
+    let data: any = {
       eventID: eventID,
       lastUpdate: new Date(),
       confessions: { total: confessions.size, accepted: 0, rejected: 0 },

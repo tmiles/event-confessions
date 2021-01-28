@@ -1,0 +1,22 @@
+mat-card {
+  width: 95%;
+  margin: 10px auto;
+}
+.events .col2 {
+  width: calc(100% / 2 - 20px);
+}
+
+@media only screen and (max-width: 600px) {
+  .events .col2 {
+    width: 100%;
+  }
+}
+
+.mat-list-base {
+  display: flex;
+}
+
+.events .mat-list-item:hover {
+  background-color: var(--color-light-blue);
+  cursor: pointer;
+}

@@ -1,129 +1,355 @@
-<div
-  *ngIf="event"
-  style="width: 90%; margin: 0px auto; padding-top: 20px; height: 100vh;"
->
-  <mat-card *ngIf="authenticated === ''">
-    <!-- <mat-card *ngIf="event.adminPassword != '' && model.pass != event.adminPassword"> -->
-    <mat-card-header>
-      <mat-card-title>
-        <h2>{{ event.formal_name }} Admin</h2>
-      </mat-card-title>
-    </mat-card-header>
-    <form [formGroup]="form">
-      <formly-form
-        [model]="model"
-        [fields]="fields"
-        [options]="options"
-        [form]="form"
-      >
-        <button
-          [disabled]="model.pass === ''"
-          mat-raised-button
-          color="primary"
-          (click)="passSecurity(model.pass)"
-        >
-          Submit
-        </button>
-      </formly-form>
-    </form>
-  </mat-card>
-  <!-- <div *ngIf="!event.adminPassword || model.pass === event.adminPassword"> -->
-  <div *ngIf="authenticated != ''">
-    <mat-card style="margin-bottom: 50px;">
+<article *ngIf="event">
+  <section *ngIf="authenticated === ''" class="max">
+    <mat-card>
+      <!-- <mat-card *ngIf="event.adminPassword != '' && model.pass != event.adminPassword"> -->
       <mat-card-header>
         <mat-card-title>
-          <h2>{{ event.formal_name }} - Confessions Management</h2>
+          <h2>{{ event.formal_name }} Admin</h2>
         </mat-card-title>
       </mat-card-header>
-      <!-- TODO New subcomponent for the chart of statistics -->
-      <!-- TODO Analytics on items pending moderation (perhaps a pop up) -->
-      <!-- TODO ability to update and run more analytics -->
-      <!-- TODO ability to update information (passwords, such) -->
-      <!-- TODO help instructions -->
-      <!-- TODO walkthrough on first initial password setup -->
-      <!-- TODO add ability to add additional emails for moderation -> display them, allow delete, add (use the chips) -->
-      <mat-card-content>
-        <mat-form-field>
-          <input
-            matInput
-            (keyup)="applyFilter($event.target.value)"
-            placeholder="Search"
-          />
-        </mat-form-field>
-        <table
-          style="width: 100%;"
-          mat-table
-          matSortActive="status"
-          matSortDirection="desc"
-          #table
-          [dataSource]="dataSource"
-          matSort
-          class="animate"
-        >
-          <ng-container matColumnDef="dateCreated">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>
-              Date
-            </mat-header-cell>
-            <mat-cell *matCellDef="let confession" [matTooltip]="confession.id">
-              <span [ngClass]="{ alert: confession.reportCount > 0 }"
-                >{{ confession["dateCreated"] | date: "short" }}
-              </span>
-            </mat-cell>
-          </ng-container>
-          <ng-container matColumnDef="to">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>
-              To
-            </mat-header-cell>
-            <mat-cell
-              *matCellDef="let confession"
-              [matTooltip]="confession.message"
-            >
-              <span [ngClass]="{ alert: confession.reportCount > 0 }">
-                {{ confession.to }}
-              </span>
-            </mat-cell>
-          </ng-container>
-          <ng-container matColumnDef="status">
-            <mat-header-cell *matHeaderCellDef mat-sort-header
-              >Status
-            </mat-header-cell>
-            <mat-cell *matCellDef="let confession">
-              <span [ngClass]="{ alert: confession.reportCount > 0 }">
-                <strong>
-                  <span *ngIf="confession.reportCount > 0"
-                    >R{{ confession.reportCount }} -
-                  </span>
-                  {{ confession.status }}
-                </strong>
-              </span>
-            </mat-cell>
-          </ng-container>
-          <ng-container matColumnDef="manage">
-            <mat-header-cell *matHeaderCellDef> Manage </mat-header-cell>
-            <mat-cell *matCellDef="let confession">
-              <button
-                mat-raised-button
-                [color]="confession.reportCount > 0 ? 'accent' : 'primary'"
-                (click)="openDialog(confession)"
-              >
-                Edit
-              </button>
-            </mat-cell>
-          </ng-container>
-
-          <mat-header-row
-            *matHeaderRowDef="displayedColumns; sticky: true"
-          ></mat-header-row>
-          <mat-row
-            *matRowDef="let row; columns: displayedColumns"
-            class="animate"
-          ></mat-row>
-        </table>
-        <mat-paginator
-          #paginator
-          [pageSizeOptions]="[10, 25, 50, 100]"
-        ></mat-paginator>
-      </mat-card-content>
+      <form [formGroup]="form">
+        <formly-form [model]="model" [fields]="fields" [options]="options" [form]="form">
+          <button [disabled]="model.pass === ''" mat-raised-button color="primary" (click)="passSecurity(model.pass)">
+            Submit
+          </button>
+        </formly-form>
+      </form>
     </mat-card>
-  </div>
-</div>
+  </section>
+  <section *ngIf="authenticated != ''" class="max">
+    <div class="flex dashboardPage" *ngIf="authenticated != ''" style="padding-top: 10px;">
+      <nav class="nav">
+        <ul>
+          <li [ngClass]="{ active: currentDash === 'home' }" (click)="navigateDash('home')">
+            <fa-icon [icon]="icons.home"></fa-icon><span class="nav-text">Home</span>
+          </li>
+          <li [ngClass]="{ active: currentDash === 'reports' }" (click)="navigateDash('reports')">
+            <fa-icon [icon]="icons.reports"></fa-icon><span class="nav-text">Reports</span>
+          </li>
+          <li *ngIf="authenticated=== 'edit'" [ngClass]="{ active: currentDash === 'settings' }"
+            (click)="navigateDash('settings')">
+            <fa-icon [icon]="icons.settings"></fa-icon><span class="nav-text">Settings</span>
+          </li>
+        </ul>
+        <!-- Popup creation or link-->
+      </nav>
+
+      <div class="mainContainer">
+        <div>
+          <h1>{{ event.formal_name }} - Confessions Management</h1>
+        </div>
+
+        <div class="row" *ngIf="currentDash === 'home'">
+          <div class="grayBg" style="padding: 1rem;">
+            <h4>
+              Messages
+            </h4>
+            <ol>
+              <li>Create community rules</li>
+              <li>Deal with reported confessions</li>
+              <li>Moderate pending confessions</li>
+              <li>Moderate pending comments</li>
+            </ol>
+          </div>
+          <div class="grayBg" style="margin-top: 1rem; padding: 1rem;">
+            <h4>
+              Confessions
+            </h4>
+            <div>
+              <mat-form-field class="width: 100%">
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search" />
+              </mat-form-field>
+              <table style="width: 100%;" mat-table matSortActive="status" matSortDirection="desc" #table
+                [dataSource]="dataSource" matSort class="animate">
+                <ng-container matColumnDef="dateCreated">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Date
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let confession" [matTooltip]="confession.id" (click)="openDialog(confession)">
+                    <span [ngClass]="{ alert: confession.reportCount > 0 }">{{ confession["dateCreated"] | date: "M/d/yy
+                      H:mm"
+                      }}
+                    </span>
+                  </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="to">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    To
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let confession" [matTooltip]="confession.message">
+                    <span [ngClass]="{ alert: confession.reportCount > 0 }">
+                      {{ confession.to }}
+                    </span>
+                  </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="status">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Status
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let confession">
+                    <span [ngClass]="{ alert: confession.reportCount > 0 }">
+                      <strong>
+                        <span *ngIf="confession.reportCount > 0">R{{ confession.reportCount }} -
+                        </span>
+                        {{ confession.status }}
+                      </strong>
+                    </span>
+                  </mat-cell>
+                </ng-container>
+                <ng-container *ngIf="false" matColumnDef="manage">
+                  <mat-header-cell *matHeaderCellDef> Manage </mat-header-cell>
+                  <mat-cell *matCellDef="let confession">
+                    <button mat-raised-button [color]="confession.reportCount > 0 ? 'accent' : 'primary'"
+                      (click)="openDialog(confession)">
+                      Edit
+                    </button>
+                  </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns" class="animate"></mat-row>
+              </table>
+              <mat-paginator #paginator [pageSizeOptions]="[10, 25, 50, 100]"></mat-paginator>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="row" *ngIf="currentDash === 'events'">
+          <div style="padding: 10px;">
+            <div class="grayBg" style="padding: 10px;">
+              <mat-card>
+                <div>
+                  <!-- TODO Convert into a table with more functionality -->
+                  <span style="font-size: 14px; display: inline-block;">All events</span>
+                  <button mat-icon-button style="margin-left: auto; display: inline-block;"
+                    (click)="navigateDash('create')">
+                    <mat-icon>add_circle</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="d_s.getAllEventStats()" matTooltip="Refresh all feed">
+                    <mat-icon>refresh</mat-icon>
+                  </button>
+                </div>
+                <mat-list class="checkered-list" *ngIf="events$ | async as events">
+                  <mat-list-item *ngFor="let ev of events" style="border-bottom: 2px solid #f9f9f9;">
+                    <span mat-line (click)="ev.opened = ev.opened ? false : true" style="
+                    font-size: 11px;
+                    text-overflow: ellipsis;
+                    display: inline-block;
+                    width: 150px;
+                    cursor: pointer;
+                  " [ngStyle]="{ color: ev.active ? 'black' : 'red' }">{{ ev.formal_name }}</span>
+                    <span style="margin-left: auto;">
+                      <!-- <mat-slide-toggle [checked]="ev.active"></mat-slide-toggle> -->
+                      <button mat-icon-button (click)="selectEvent(ev)">
+                        <mat-icon>chevron_right</mat-icon>
+                        <!-- TODO delete events, toggle visibility (perhaps popup) -->
+                      </button>
+                    </span>
+                    <p mat-line *ngIf="ev.opened" style="font-size: 10px;">
+                      Active:
+                      <mat-slide-toggle [checked]="ev.active"></mat-slide-toggle>
+                      <button matTooltip="Delete event" disabled mat-icon-button>
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </p>
+                  </mat-list-item>
+                </mat-list>
+              </mat-card>
+            </div>
+          </div>
+
+          <!-- TODO update this to be a component and popup -->
+          <div>
+            <h4>Send Email</h4>
+            <h5>Send automated email</h5>
+            Event | Email | Email template
+          </div>
+
+          <hr />
+          <div>
+            <h4>Email History</h4>
+            Shows which emails have been sent (i.e. automated)
+          </div>
+        </div>
+        <div class="row" *ngIf="currentDash === 'reports'">
+          <div>
+            <h4>Tables</h4>
+          </div>
+          <div style="padding: 10px;" *ngIf="event">
+            <div *ngIf="currentStats">
+              <!-- <span style="font-size: 10px;">Last updated: {{currentStats.lastUpdate.toDate() | date:'short'}}</span> -->
+              <span style="font-size: 10px; display: inline-block;">Last updated: {{ currentStats.lastUpdate | date:
+                "short" }}</span>
+              <button mat-icon-button style="margin-left: auto; display: inline-block; font-size: 12px;"
+                (click)="forceUpdate(event.id)">
+                <mat-icon>refresh</mat-icon>
+              </button>
+              <div style="display: flex; justify-content: center; flex-wrap: wrap;">
+                <div style="
+                width: 100px;
+                display: inline-block;
+                height: 100px;
+                margin: 5px;
+              " class="text-center">
+                  <h3>{{ currentStats.confessions.total }}</h3>
+                  <p>Confessions</p>
+                </div>
+                <div style="
+                width: 100px;
+                display: inline-block;
+                height: 100px;
+                margin: 5px;
+              " class="text-center">
+                  <h3>{{ currentStats.reactions.total }}</h3>
+                  <p>Reactions</p>
+                </div>
+                <div style="
+                width: 100px;
+                display: inline-block;
+                height: 100px;
+                margin: 5px;
+              " class="text-center">
+                  <h3>{{ currentStats.comments.total }}</h3>
+                  <p>Comments</p>
+                </div>
+                <div style="
+                width: 100px;
+                display: inline-block;
+                height: 100px;
+                margin: 5px;
+              " class="text-center">
+                  <h3>
+                    {{
+                    currentStats.averages.acceptRate * 100 | number: "1.1-2"
+                    }}%
+                  </h3>
+                  <p>Accept Rate</p>
+                </div>
+                <div style="
+                width: 100px;
+                display: inline-block;
+                height: 100px;
+                margin: 5px;
+              " class="text-center">
+                  <h3>{{ currentStats.averages.reactions | number: "1.1-2" }}</h3>
+                  <p>Avg Reactions</p>
+                </div>
+                <div style="
+                width: 100px;
+                display: inline-block;
+                height: 100px;
+                margin: 5px;
+              " class="text-center">
+                  <h3>{{ currentStats.averages.comments | number: "1.1-2" }}</h3>
+                  <p>Avg Comments</p>
+                </div>
+              </div>
+              <div>
+                <mat-tab-group>
+                  <mat-tab label="Pies">
+                    <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" chartType="pie"
+                      [options]="pieChartOptions" [plugins]="pieChartPlugins" [colors]="pieChartColors" legend="true">
+                    </canvas>
+                  </mat-tab>
+                  <mat-tab label="Bar"></mat-tab>
+                  <mat-tab label="Line"></mat-tab>
+                </mat-tab-group>
+              </div>
+            </div>
+          </div>
+          <div class="divider">
+            <h4>Download Data</h4>
+            <p>Upcoming feature to download all confession data including comments, confessions, page views and more.
+            </p>
+
+          </div>
+        </div>
+        <div class="row " *ngIf="currentDash === 'settings'">
+          <div>
+            <h4>Change event details</h4>
+            <p>Edit event details</p>
+            <h5>Event details</h5>
+            <form [formGroup]="eventForm" (ngSubmit)="updateEvent()">
+              <formly-form [model]="eventModel" [fields]="eventFields" [options]="options" [form]="eventForm">
+                <button mat-raised-button type="submit" style="margin-top: 8px">Update</button>
+              </formly-form>
+            </form>
+          </div>
+          <div class="divider" style="margin-top: 2rem">
+            <h4>Change passwords</h4>
+            <p>Change the access passwords</p>
+            <ol>
+              <li>
+                <strong>Attendee Password:</strong> View only password to see moderated confessions
+              </li>
+              <li>
+                <strong>Admin Password:</strong> Access to this page to moderate, see analytics and manage event
+                settings
+              </li>
+              <li>
+                <strong>Admin View Only Password:</strong> Access to this page, but limited access.
+              </li>
+              <ul>
+                <li>Can't moderate posts or comments</li>
+                <li>Can't access settings page</li>
+              </ul>
+            </ol>
+            <h5>Passwords</h5>
+            <form [formGroup]="passwordForm" (ngSubmit)="updateEvent()">
+              <formly-form [model]="passwordsModel" [fields]="passwordFields" [options]="options" [form]="passwordForm">
+                <button mat-raised-button type="submit" style="margin-top: 8px">Update</button>
+              </formly-form>
+            </form>
+          </div>
+        </div>
+      </div>
+      <aside class="sidebar">
+        <div>
+          <h3>Summaries</h3>
+          <mat-accordion>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                Today
+              </mat-expansion-panel-header>
+              <div class="flex flex-row">
+                <div class="statistic"><span class="number">10</span>Views</div>
+                <div class="statistic"><span class="number">10</span>Today's Confessions</div>
+                <div class="statistic"><span class="number">10</span>Views</div>
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                Total
+              </mat-expansion-panel-header>
+              <div class="flex flex-row" *ngIf="liveAnalytics">
+                <div class="statistic"><span class="number">{{liveAnalytics.totalApproved}}</span>Approved Confessions
+                </div>
+                <div class="statistic"><span class="number">{{liveAnalytics.totalPending}}</span>Pending Confessions
+                </div>
+                <div class="statistic"><span class="number">{{liveAnalytics.totalRejected}}</span>Rejected Confessions
+                </div>
+                <div class="statistic"><span class="number">{{liveAnalytics.totalReported}}</span>Reported</div>
+                <div class="statistic"><span class="number">{{liveAnalytics.total}}</span>Total confessions</div>
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>Views
+              </mat-expansion-panel-header>
+              Coming soon, google analytics
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+        <div *ngIf="adminHelp$ | async as helpArticles">
+          <h3>Help</h3>
+          <mat-accordion>
+            <mat-expansion-panel *ngFor="let article of helpArticles.articles">
+              <mat-expansion-panel-header>{{article.title}}</mat-expansion-panel-header>
+              <div [innerHTML]="article.html"></div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+</article>

@@ -1,0 +1,57 @@
+<article>
+    <section class="max">
+        <h2>Discover</h2>
+        <!-- <input matInput (keyup)="" placeholder="Search"> -->
+        <ng-container *ngIf="events$ | async as events">
+            <div class="full-width searchBar">
+                <input class="searchBar" [(ngModel)]="searchField" matInput placeholder="Search for event">
+            </div>
+            <div *ngIf="searchField">
+                <h5>Search Results</h5>
+                <div class="flex-row col4">
+                    <app-event-card class="confession-card" *ngFor="
+                let event of events | filter:searchField:searchFields
+              " [event]="event">
+                    </app-event-card>
+                </div>
+            </div>
+        </ng-container>
+    </section>
+    <section class="max divider">
+        <!-- Show if the person has accessed pages before (local storage)-->
+        <h3>Your Accessed Events</h3>
+        <p>Quickly access the events you've accessed before</p>
+        <div class="flex flex-row col3">
+            <app-event-card eventID="">
+            </app-event-card>
+
+        </div>
+    </section>
+    <section class="max divider">
+        <h3>Featured</h3>
+        <p>Check out the top events.</p>
+        <div class="flex-row col3">
+            <app-event-card *ngFor="let event of events$ | async | slice:0:3" [event]="event">
+            </app-event-card>
+        </div>
+    </section>
+    <section class="max divider">
+        <h3>Newest</h3>
+        <p>Check out the most recent confession rooms.</p>
+        <div class="flex-row col3">
+
+            <app-event-card *ngFor="let event of events$ | async | slice:0:3" [event]="event">
+            </app-event-card>
+        </div>
+    </section>
+    <section class="bg-gray">
+        <div class="max flex flex-spaced flex-vertical-center">
+            <p>
+                Are you interested in hosting a confessions room?
+            </p>
+            <p>
+                <button mat-raised-button>Contact To Create</button>
+            </p>
+        </div>
+    </section>
+</article>
